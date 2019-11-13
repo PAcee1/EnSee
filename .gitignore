@@ -3,4 +3,10 @@
 *.iws
 *.iml
 *.ipr
-/target/
+
+target/
+*.class
+.project
+.settings/
+
+**/tmp

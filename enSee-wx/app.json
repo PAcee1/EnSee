@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/userRegist/regist",
+    "pages/index/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "嗯看视频",
+    "navigationBarTextStyle": "black"
+  },
+  "debug":true,
+  "sitemapLocation": "sitemap.json"
+}

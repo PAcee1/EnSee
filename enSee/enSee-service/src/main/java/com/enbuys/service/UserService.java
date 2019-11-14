@@ -9,9 +9,13 @@ import com.enbuys.pojo.Users;
  */
 public interface UserService {
 
+    Users queryUserById(String userId);
+
     Boolean findUserNameIsExist(String username);
 
     Users saveUser(Users users);
 
     Users findUserByPassword(Users users);
+
+    void updateUserById(Users users);
 }

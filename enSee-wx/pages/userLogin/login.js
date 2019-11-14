@@ -39,7 +39,10 @@ Page({
                             title: '登录成功',
                             duration: 2000
                         }),
-                            app.userInfo = res.data.data
+                        app.userInfo = res.data.data,
+                          wx.navigateTo({
+                            url: '../mine/mine',
+                          })
                     } else if (res.data.status == 500) {
                         wx.showToast({
                             title: res.data.msg,

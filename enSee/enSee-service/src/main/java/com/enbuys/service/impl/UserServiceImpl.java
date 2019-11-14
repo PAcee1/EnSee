@@ -26,6 +26,13 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
+    public Users queryUserById(String userId) {
+        Users users = usersMapper.selectByPrimaryKey(userId);
+        return users;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
     public Boolean findUserNameIsExist(String username) {
         Users users = new Users();
         users.setUsername(username);
@@ -66,5 +73,11 @@ public class UserServiceImpl implements UserService {
         }
         Users user = usersMapper.selectOneByExample(example);
         return user;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateUserById(Users users) {
+        usersMapper.updateByPrimaryKeySelective(users);
     }
 }

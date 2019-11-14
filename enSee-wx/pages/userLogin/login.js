@@ -2,16 +2,17 @@ const app = getApp()
 
 Page({
     data: {
-
     },
-    doRegist : function(e){
-        var formObj = e.detail.value;
-        var username = formObj.username;
-        var password = formObj.password;
-        if(username.length == 0 || password.length == 0){
+
+    doLogin : function(e){
+        var valueObj = e.detail.value;
+        var username = valueObj.username;
+        var password = valueObj.password;
+
+        if(username.length ==0 || password.length == 0){
             wx.showToast({
                 title: '用户名或密码不能为空',
-                icon : 'none',
+                icon:'none',
                 duration: 2000
             })
         }else{
@@ -20,26 +21,26 @@ Page({
                 title: '请等待',
             })
             wx.request({
-                url: serverUrl + '/user/regist',
-                method: 'POST',
-                data: {
-                    username : username,
-                    password: password
+                url: serverUrl + '/user/login',
+                method : 'POST',
+                data:{
+                    "username":username,
+                    "password":password
                 },
-                header:{
+                header: {
                     'content-type': 'application/json'
                 },
-                success : function(res){
+                success: function (res) {
                     console.log(res.data);
                     wx.hideLoading();
-                    // 注册成功
-                    if(res.data.status == 200){
+                    // 登录成功
+                    if (res.data.status == 200) {
                         wx.showToast({
-                            title: '注册成功',
+                            title: '登录成功',
                             duration: 2000
                         }),
-                        app.userInfo = res.data.data
-                    }else if(res.data.status == 500){
+                            app.userInfo = res.data.data
+                    } else if (res.data.status == 500) {
                         wx.showToast({
                             title: res.data.msg,
                             icon: 'none',
@@ -51,9 +52,9 @@ Page({
         }
     },
 
-    goLoginPage: function () {
+    goRegistPage:function(){
         wx.redirectTo({
-            url: '../userLogin/login',
+            url: '../userRegist/regist',
         })
     }
 })

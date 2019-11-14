@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * @Author: Pace
@@ -49,5 +50,21 @@ public class UserServiceImpl implements UserService {
 
         usersMapper.insert(users);
         return users;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    @Override
+    public Users findUserByPassword(Users users) {
+        Example example = new Example(Users.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("username",users.getUsername());
+        try {
+            String password = MD5Utils.getMD5Str(users.getPassword());
+            criteria.andEqualTo("password",password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Users user = usersMapper.selectOneByExample(example);
+        return user;
     }
 }

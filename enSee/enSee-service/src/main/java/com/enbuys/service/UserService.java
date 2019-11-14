@@ -12,4 +12,6 @@ public interface UserService {
     Boolean findUserNameIsExist(String username);
 
     Users saveUser(Users users);
+
+    Users findUserByPassword(Users users);
 }

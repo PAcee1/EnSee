@@ -5,6 +5,7 @@ import com.enbuys.pojo.vo.UsersVo;
 import com.enbuys.service.UserService;
 import com.enbuys.utils.JsonResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/user")
-@Api(value = "用户接口",tags = "用户注册登录Api")
+@Api(value = "用户接口",tags = "用户Api")
 public class UserController extends BasicController {
 
     @Autowired
@@ -71,6 +72,15 @@ public class UserController extends BasicController {
         UsersVo userVo = setUserRedisSession(user);
 
         return JsonResult.ok(userVo);
+    }
+
+    @ApiOperation(value = "用户注销",notes = "用户注销接口")
+    @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
+            paramType = "query",dataType = "String")
+    @PostMapping("/logout")
+    public JsonResult logout(String userId){
+        redis.del(USER_REDIS_SESSION + ":" +userId);
+        return JsonResult.ok("删除成功");
     }
 
     private UsersVo setUserRedisSession(Users user){

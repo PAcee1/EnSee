@@ -122,11 +122,12 @@ public class UserController extends BasicController {
 
         // 调用接口上传图片
         Map<String, Object> map = FileUpload.upload(files[0], fileSpace, uploadPathDB);
-        String fileFinalPath = (String) map.get("fileFinalPath");
-        uploadPathDB = (String) map.get("uploadPathDB");
-        if(fileFinalPath == null){
+        if(map == null){
             return JsonResult.errorMsg("上传失败");
         }
+        String fileFinalPath = (String) map.get("fileFinalPath");
+        uploadPathDB = (String) map.get("uploadPathDB");
+
 
         // 图片上传成功，保存图片到数据库中
         Users users = new Users();

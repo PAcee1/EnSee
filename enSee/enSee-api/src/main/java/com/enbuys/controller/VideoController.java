@@ -71,13 +71,12 @@ public class VideoController extends BasicController {
 
         // 上传视频文件,返回最终路径
         Map<String, Object> map = FileUpload.upload(file, fileSpace, uploadPathDB);
+        if(map == null){
+            return JsonResult.errorMsg("上传失败");
+        }
         //最终视频文件的绝对路径
         String fileFinalPath = (String) map.get("fileFinalPath");
         uploadPathDB = (String) map.get("uploadPathDB");
-        // 如果为null，说明保存失败了
-        if(fileFinalPath == null){
-            return JsonResult.errorMsg("上传失败");
-        }
 
         // 如果选择了bgm 需要合并音视频
         String mergeVideoDBPath = "";

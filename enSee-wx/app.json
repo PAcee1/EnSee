@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/userLogin/login",
+    "pages/chooseBgm/chooseBgm",
+    
     "pages/mine/mine",
     
     "pages/userRegist/regist",
@@ -12,6 +14,5 @@
     "navigationBarTitleText": "嗯看视频",
     "navigationBarTextStyle": "black"
   },
-  "debug":true,
   "sitemapLocation": "sitemap.json"
 }

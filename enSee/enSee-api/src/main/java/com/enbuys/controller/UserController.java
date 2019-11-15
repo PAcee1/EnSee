@@ -3,6 +3,7 @@ package com.enbuys.controller;
 import com.enbuys.pojo.Users;
 import com.enbuys.pojo.vo.UsersVo;
 import com.enbuys.service.UserService;
+import com.enbuys.utils.FileUpload;
 import com.enbuys.utils.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -114,48 +116,16 @@ public class UserController extends BasicController {
             return JsonResult.errorMsg("头像更新失败");
         }
         // 定义上传到的文件夹路径
-        String fileSpace = "D:/Projects/EnSee-image";
+        String fileSpace = FILE_SPACE;
         // 保存到数据库中的相对路径
         String uploadPathDB = "/" + userId + "/face";
 
-        // 判断文件是否存在
-        if(files != null && files.length != 0 ){
-            FileOutputStream fileOutputStream = null;
-            InputStream inputStream = null;
-
-            // 获取文件名
-            String fileName = files[0].getOriginalFilename();
-            if(!StringUtils.isEmpty(fileName)){
-                // 拼接最终路径
-                String path = fileSpace + uploadPathDB + "/" + fileName;
-                // 设置数据库保存的路径
-                uploadPathDB += ("/" + fileName);
-
-                File file = new File(path);
-                // 判断路径中父文件夹是否存在，不存在创建
-                if(file.getParentFile() != null || !file.getParentFile().isDirectory()){
-                    file.getParentFile().mkdirs();
-                }
-
-                // 存在，保存图片到本地
-                try {
-                    fileOutputStream = new FileOutputStream(file);
-                    inputStream = files[0].getInputStream();
-                    IOUtils.copy(inputStream,fileOutputStream);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return JsonResult.ok("头像更新失败");
-                } finally {
-                    if(fileOutputStream!=null){
-                        fileOutputStream.flush();
-                        fileOutputStream.close();
-                    }
-                }
-            }else {
-                return JsonResult.ok("头像更新失败");
-            }
-        }else {
-            return JsonResult.ok("头像更新失败");
+        // 调用接口上传图片
+        Map<String, Object> map = FileUpload.upload(files[0], fileSpace, uploadPathDB);
+        String fileFinalPath = (String) map.get("fileFinalPath");
+        uploadPathDB = (String) map.get("uploadPathDB");
+        if(fileFinalPath == null){
+            return JsonResult.errorMsg("上传失败");
         }
 
         // 图片上传成功，保存图片到数据库中
@@ -167,6 +137,11 @@ public class UserController extends BasicController {
         return JsonResult.ok(uploadPathDB);
     }
 
+    /**
+     * 保存用户无状态Session到Redis中
+     * @param user
+     * @return
+     */
     private UsersVo setUserRedisSession(Users user){
         // 创建无状态Session，保存到redis中，返回userVo
         String uniqueToken = UUID.randomUUID().toString();

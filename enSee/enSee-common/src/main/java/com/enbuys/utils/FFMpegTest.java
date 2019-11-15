@@ -31,7 +31,8 @@ public class FFMpegTest {
 		
 		ProcessBuilder builder = new ProcessBuilder(command);
 		Process process = builder.start();
-		
+
+		/// 防止出错，导致线程卡主，资源浪费
 		InputStream errorStream = process.getErrorStream();
 		InputStreamReader inputStreamReader = new InputStreamReader(errorStream);
 		BufferedReader br = new BufferedReader(inputStreamReader);
@@ -53,9 +54,9 @@ public class FFMpegTest {
 	}
 
 	public static void main(String[] args) {
-		FFMpegTest ffmpeg = new FFMpegTest("C:\\ffmpeg\\bin\\ffmpeg.exe");
+		FFMpegTest ffmpeg = new FFMpegTest("D:\\Major\\ffmpeg\\bin\\ffmpeg.exe");
 		try {
-			ffmpeg.convertor("C:\\苏州大裤衩.mp4", "C:\\北京北京.avi");
+			ffmpeg.convertor("D:\\Major\\ffmpeg\\bin\\ddd.mp4", "D:\\Major\\ffmpeg\\bin\\ccc.avi");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

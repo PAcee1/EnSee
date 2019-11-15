@@ -12,4 +12,8 @@ public class BasicController {
     public RedisOperator redis;
 
     public static final String USER_REDIS_SESSION = "user-redis-session";
+
+    public static final String FILE_SPACE = "D:/Projects/EnSee-vedios";
+
+    public static final String FFMPEG_PATH = "D:\\Major\\ffmpeg\\bin\\ffmpeg.exe";
 }

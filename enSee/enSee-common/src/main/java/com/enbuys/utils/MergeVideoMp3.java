@@ -26,26 +26,31 @@ public class MergeVideoMp3 {
 		
 		command.add("-i");
 		command.add(mp3InputPath);
+
+        command.add("-t");
+        command.add(String.valueOf(seconds));
 		
-		command.add("-t");
-		command.add(String.valueOf(seconds));
-		
-		command.add("-y");
+		command.add("-c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0");
+        // command.add("-y");
 		command.add(videoOutputPath);
-		
-//		for (String c : command) {
-//			System.out.print(c + " ");
-//		}
-		
-		ProcessBuilder builder = new ProcessBuilder(command);
-		Process process = builder.start();
-		
+		String cmd = "";
+		for (String c : command) {
+            cmd += (c+" ");
+		}
+
+        Process process = Runtime.getRuntime().exec(cmd);
+		/*ProcessBuilder builder = new ProcessBuilder(command);
+		Process process = builder.start();*/
+
+		/// 防止出错，导致线程卡主，资源浪费
 		InputStream errorStream = process.getErrorStream();
 		InputStreamReader inputStreamReader = new InputStreamReader(errorStream);
 		BufferedReader br = new BufferedReader(inputStreamReader);
 		
 		String line = "";
+        System.out.println();
 		while ( (line = br.readLine()) != null ) {
+            System.out.println(line);
 		}
 		
 		if (br != null) {
@@ -61,9 +66,9 @@ public class MergeVideoMp3 {
 	}
 
 	public static void main(String[] args) {
-		MergeVideoMp3 ffmpeg = new MergeVideoMp3("C:\\ffmpeg\\bin\\ffmpeg.exe");
+		MergeVideoMp3 ffmpeg = new MergeVideoMp3("D:\\Major\\ffmpeg\\bin\\ffmpeg.exe");
 		try {
-			ffmpeg.convertor("C:\\苏州大裤衩.mp4", "C:\\music.mp3", 7.1, "C:\\这是通过java生产的视频.mp4");
+			ffmpeg.convertor("D:\\Major\\ffmpeg\\bin\\aaa.mp4", "D:\\Projects\\EnSee-vedios\\bgm\\告白之夜.mp3", 7.1, "D:\\Major\\ffmpeg\\bin\\合并音视频.mp4");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -27,11 +27,13 @@ public class BgmServiceImpl implements BgmService {
     @Autowired
     private BgmMapper bgmMapper;
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public List<Bgm> queryAll() {
         return bgmMapper.selectAll();
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public Bgm findBgmById(String id) {
         return bgmMapper.selectByPrimaryKey(id);

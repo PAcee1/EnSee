@@ -1,24 +1,19 @@
 package com.enbuys.controller;
 
 import com.enbuys.pojo.Users;
-import com.enbuys.pojo.vo.UsersVo;
+import com.enbuys.pojo.vo.UsersVO;
 import com.enbuys.service.UserService;
 import com.enbuys.utils.FileUpload;
 import com.enbuys.utils.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,7 +50,7 @@ public class UserController extends BasicController {
         Users user = userService.saveUser(users);
         user.setPassword("");
 
-        UsersVo userVo = setUserRedisSession(user);
+        UsersVO userVo = setUserRedisSession(user);
 
         return JsonResult.ok(userVo);
     }
@@ -74,7 +69,7 @@ public class UserController extends BasicController {
             return JsonResult.errorMsg("用户名或密码错误");
         }
 
-        UsersVo userVo = setUserRedisSession(user);
+        UsersVO userVo = setUserRedisSession(user);
 
         return JsonResult.ok(userVo);
     }
@@ -101,7 +96,7 @@ public class UserController extends BasicController {
         }
 
         Users user = userService.queryUserById(userId);
-        UsersVo usersVo = new UsersVo();
+        UsersVO usersVo = new UsersVO();
         BeanUtils.copyProperties(user,usersVo);
         return JsonResult.ok(usersVo);
     }
@@ -143,11 +138,11 @@ public class UserController extends BasicController {
      * @param user
      * @return
      */
-    private UsersVo setUserRedisSession(Users user){
+    private UsersVO setUserRedisSession(Users user){
         // 创建无状态Session，保存到redis中，返回userVo
         String uniqueToken = UUID.randomUUID().toString();
         redis.set(USER_REDIS_SESSION + ":" + user.getId(),uniqueToken,60*30);
-        UsersVo userVo = new UsersVo();
+        UsersVO userVo = new UsersVO();
         BeanUtils.copyProperties(user,userVo);
         userVo.setUserToken(uniqueToken);
         return userVo;

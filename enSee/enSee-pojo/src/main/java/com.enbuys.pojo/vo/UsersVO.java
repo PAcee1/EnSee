@@ -8,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 
 @ApiModel(value = "用户对象",description = "用户对象")
-public class UsersVo {
+public class UsersVO {
 
     @ApiModelProperty(hidden = true)
     private String id;

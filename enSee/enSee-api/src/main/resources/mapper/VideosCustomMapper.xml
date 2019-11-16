@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.enbuys.mapper.VideosMapper" >
-  <resultMap id="BaseResultMap" type="com.enbuys.pojo.Videos" >
+<mapper namespace="com.enbuys.mapper.VideosCustomMapper" >
+  <resultMap id="BaseResultMap" type="com.enbuys.pojo.vo.VideosVO" >
     <!--
       WARNING - @mbg.generated
     -->
@@ -17,5 +17,25 @@
     <result column="like_counts" property="likeCounts" jdbcType="BIGINT" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="face_image" property="faceImage" jdbcType="VARCHAR" />
   </resultMap>
+
+  <select id="queryAllVideosVO" parameterType="String" resultMap="BaseResultMap">
+    SELECT
+        V.*,
+        U.NICKNAME as "nickname",
+        U.face_image AS "face_image"
+    FROM
+        VIDEOS V
+    LEFT JOIN USERS U ON V.USER_ID = U.ID
+    WHERE
+        1 = 1
+    <if test="videoDesc != null and videoDesc != ''">
+      AND V.VIDEO_DESC LIKE '%${videoDesc}%'
+    </if>
+    AND V.STATUS = 1
+    ORDER BY
+        V.CREATE_TIME
+  </select>
 </mapper>

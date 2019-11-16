@@ -2,6 +2,7 @@ package com.enbuys.service;
 
 import com.enbuys.pojo.Bgm;
 import com.enbuys.pojo.Videos;
+import com.enbuys.utils.PagedResult;
 
 import java.util.List;
 
@@ -15,4 +16,8 @@ public interface VideoService {
     String save(Videos videos);
 
     void updateVideo(String videoId, String coverPath);
+
+    PagedResult queryAllVideosVO(String videoDesc,Integer isSaveRecord,Integer page,Integer size);
+
+    List<String> queryHotRecords();
 }

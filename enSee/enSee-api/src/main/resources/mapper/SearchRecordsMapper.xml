@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.enbuys.com.enbuys.mapper.SearchRecordsMapper" >
+<mapper namespace="com.enbuys.mapper.SearchRecordsMapper" >
   <resultMap id="BaseResultMap" type="com.enbuys.pojo.SearchRecords" >
     <!--
       WARNING - @mbg.generated
@@ -8,4 +8,16 @@
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="content" property="content" jdbcType="VARCHAR" />
   </resultMap>
+
+  <select id="queryHotRecords" resultType="String">
+    SELECT
+        CONTENT
+    FROM
+        search_records
+    GROUP BY
+        CONTENT
+    ORDER BY
+        COUNT(CONTENT) DESC
+    LIMIT 0,7
+  </select>
 </mapper>

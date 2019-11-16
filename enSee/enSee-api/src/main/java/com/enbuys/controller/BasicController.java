@@ -15,5 +15,6 @@ public class BasicController {
 
     public static final String FILE_SPACE = "D:/Projects/EnSee-vedios";
 
-    public static final String FFMPEG_PATH = "D:\\Major\\ffmpeg\\bin\\ffmpeg.exe";
+    //public static final String FFMPEG_PATH = "D:\\Major\\ffmpeg\\bin\\ffmpeg.exe";
+    public static final String FFMPEG_PATH = "E:\\Major\\ffmpeg\\bin\\ffmpeg.exe";
 }

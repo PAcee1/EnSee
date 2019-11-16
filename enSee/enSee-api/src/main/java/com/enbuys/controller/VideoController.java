@@ -13,9 +13,7 @@ import io.swagger.annotations.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -106,7 +104,7 @@ public class VideoController extends BasicController {
         video.setVideoHeight(videoHeight);
         video.setVideoSeconds((float) videoSeconds);
         video.setVideoWidth(videoWidth);
-        video.setVideoPath(mergeVideoDBPath);
+        video.setVideoPath(mergeVideoDBPath==""?uploadPathDB:mergeVideoDBPath);
         video.setUserId(userId);
         video.setStatus(VideoStatusEnum.SUCCESS.value);
         video.setCreateTime(new Date());
@@ -116,40 +114,38 @@ public class VideoController extends BasicController {
         return JsonResult.ok(videoId);
     }
 
-    @ApiOperation(value="上传封面", notes="上传封面的接口")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="userId", value="用户id", required=true,
-                    dataType="String", paramType="form"),
-            @ApiImplicitParam(name="videoId", value="视频主键id", required=true,
-                    dataType="String", paramType="form")
-    })
-    @PostMapping(value="/uploadCover", headers="content-type=multipart/form-data")
-    public JsonResult uploadCover(String userId,
-                                       String videoId,
-                                       @ApiParam(value="视频封面", required=true)
-                                               MultipartFile file) throws Exception {
-
-        if (StringUtils.isBlank(videoId) || StringUtils.isBlank(userId)) {
-            return JsonResult.errorMsg("视频主键id和用户id不能为空...");
+    /**
+     * 查询全部视频列表
+     * @param desc 搜索时使用，查询描述
+     * @param isSaveRecord 用来判断是否保存到搜索词汇
+     * @param page
+     * @param size
+     * @return
+     */
+    @PostMapping("/queryAll")
+    public JsonResult queryAll(String videoDesc,Integer isSaveRecord,
+                               Integer page,Integer size){
+        // 如果为null，默认不保存
+        if(isSaveRecord == null) {
+            isSaveRecord = 0;
         }
-
-        // 文件保存的命名空间
-		String fileSpace = FILE_SPACE;
-        // 保存到数据库中的相对路径
-        String uploadPathDB = "/" + userId + "/video";
-
-        FileOutputStream fileOutputStream = null;
-        InputStream inputStream = null;
-        // 上传视频文件,返回最终路径
-        Map<String, Object> map = FileUpload.upload(file, fileSpace, uploadPathDB);
-        String fileFinalPath = (String) map.get("fileFinalPath");
-        uploadPathDB = (String) map.get("uploadPathDB");
-        if(fileFinalPath == null){
-            return JsonResult.errorMsg("上传失败");
+        if(page == null){
+            page = 1;
         }
-
-        videoService.updateVideo(videoId, uploadPathDB);
-
-        return JsonResult.ok();
+        if(size == null){
+            size = 5;
+        }
+        return JsonResult.ok(videoService.queryAllVideosVO(videoDesc,isSaveRecord,page,size));
     }
+
+    /**
+     * 搜索热点词
+     * @return
+     */
+    @PostMapping("/queryHotList")
+    public JsonResult queryHotRecords(){
+        return JsonResult.ok(videoService.queryHotRecords());
+    }
+
+
 }

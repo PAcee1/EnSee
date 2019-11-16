@@ -1,19 +1,20 @@
+var videoUtil = require("../../utils/videoutil.js");
 const app = getApp()
 
 Page({
   data: {
-    faceUrl : "../resource/images/noneface.png",
+    faceUrl: "../resource/images/noneface.png",
     fansCounts: 0,
     followCounts: 0,
-    receiveLikeCounts:0,
-    nickname : "昵称"
+    receiveLikeCounts: 0,
+    nickname: "昵称"
   },
 
-  onLoad: function (params) {
+  onLoad: function(params) {
     // 页面加载时，请求后端获取用户信息
     var _this = this;
-    var user = app.userInfo;
-    var serverUrl = app.serverUrl
+    var userInfo = app.getGlobalUserInfo();
+    var serverUrl = app.serverUrl;
     wx.showLoading({
       title: '加载中...',
     });
@@ -22,24 +23,24 @@ Page({
     wx.request({
       url: serverUrl + '/user/getUserInfo?userId=' + user.id,
       method: 'POST',
-      header:{
-        "context-type":"application/json"
+      header: {
+        "context-type": "application/json"
       },
       // 成功将数据绑定
-      success: function(res){
+      success: function(res) {
         var data = res.data;
         console.log(data);
         wx.hideLoading();
-        if(data.status == 200){
+        if (data.status == 200) {
           var userInfo = data.data;
           // 第一次注册没有头像处理
           var faceUrl = "../resource/images/noneface.png";
-          if (userInfo.faceImage != null || userInfo.faceImage != ""
-            || userInfo.faceImage != undefined){
+          if (userInfo.faceImage != null || userInfo.faceImage != "" ||
+            userInfo.faceImage != undefined) {
             faceUrl = serverUrl + userInfo.faceImage;
           }
           _this.setData({
-            faceUrl:faceUrl,
+            faceUrl: faceUrl,
             fansCounts: userInfo.fansCounts,
             followCounts: userInfo.followCounts,
             receiveLikeCounts: userInfo.receiveLikeCounts,
@@ -51,23 +52,24 @@ Page({
   },
 
   // 登出
-  logout: function(){
-    var user = app.userInfo;
+  logout: function() {
+    var userInfo = app.getGlobalUserInfo();
     var serverUrl = app.serverUrl;
     wx.request({
       url: serverUrl + '/user/logout?userId=' + user.id,
       method: 'POST',
-      header:{
-        "content-type":"application/json"
+      header: {
+        "content-type": "application/json"
       },
-      success: function(res){
+      success: function(res) {
         console.log(res.data);
-        if(res.data.status == 200){
+        if (res.data.status == 200) {
           wx.showToast({
-            title: '登出成功',
-            duration: 2000
-          }),
-          app.userInfo = null;
+              title: '登出成功',
+              duration: 2000
+            }),
+            //app.userInfo = null;
+            wx.removeStorageSync("userInfo");
           // 登出成功跳转到登录页面
           wx.redirectTo({
             url: '../userLogin/login',
@@ -75,7 +77,7 @@ Page({
         } else if (res.data.status == 500) {
           wx.showToast({
             title: res.data.msg,
-            icon:'none',
+            icon: 'none',
             duration: 2000
           })
         }
@@ -84,7 +86,7 @@ Page({
   },
 
   // 修改头像
-  changeFace: function(){
+  changeFace: function() {
     // 暂存this，防止到下面作用域不正确
     var _this = this;
     // 调用api，让用户选择照片
@@ -96,36 +98,36 @@ Page({
         // tempFilePath可以作为img标签的src属性显示图片
         var tempFilePaths = res.tempFilePaths;
         console.log(tempFilePaths);
-        var user = app.userInfo;
+        var userInfo = app.getGlobalUserInfo();
         var serverUrl = app.serverUrl;
         wx.showLoading({
           title: '上传中...',
         })
         // 成功调用上传文件接口
         wx.uploadFile({
-          url: serverUrl + '/user/uploadFace?userId=' + user.id, 
+          url: serverUrl + '/user/uploadFace?userId=' + user.id,
           filePath: tempFilePaths[0],
           name: 'file',
           success(res) {
             wx.hideLoading();
             var data = JSON.parse(res.data);
             console.log(data);
-            if(data.status == 200){
+            if (data.status == 200) {
               wx.showToast({
                 title: '更换头像成功',
               })
               // 将头像路径替换
               var url = data.data;
               _this.setData({
-                faceUrl : serverUrl + url
+                faceUrl: serverUrl + url
               })
-            }else{
+            } else {
               wx.showToast({
                 title: '更换头像失败',
                 icon: 'none'
               })
             }
-            
+
           }
         })
       }
@@ -133,43 +135,8 @@ Page({
   },
 
   // 上传视频
-  uploadVideo: function(){
-    var _this = this;
-    wx.chooseVideo({
-      sourceType: ['album'],
-      success(res) {
-        console.log(res);
-        var duration = res.duration; // 视频长度
-        var height = res.height; // 视频高度
-        var width = res.width; // 视频宽度
-        var tempFilePath = res.tempFilePath; // 微信临时视频路径
-        var thumbTempFilePath = res.thumbTempFilePath; // 封面截图
-
-        // 判断视频长度大于10秒，禁止上传
-        if(duration > 11){
-          wx.showToast({
-            title: '短视频时间大于10秒，不能上传',
-            icon:'none',
-            duration: 3000
-          })
-        }else if(duration < 2){
-          wx.showToast({
-            title: '短视频时间小于2秒，不能上传',
-            icon: 'none',
-            duration: 3000
-          })
-        }else{
-          // 跳转到选择bgm的页面
-          wx.navigateTo({
-            url: '../chooseBgm/chooseBgm?duration=' + duration +
-              '&height=' + height +
-              '&width=' + width +
-              '&tempFilePath=' + tempFilePath +
-              '&thumbTempFilePath=' + thumbTempFilePath,
-          })
-        }
-      }
-    })
+  uploadVideo: function() {
+    videoUtil.uploadVideo();
   }
 
 })

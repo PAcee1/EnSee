@@ -39,7 +39,9 @@ Page({
                             title: '登录成功',
                             duration: 2000
                         }),
-                        app.userInfo = res.data.data,
+                        //app.userInfo = res.data.data,
+                        // 设置全局缓存user
+                          app.setGlobalUserInfo(res.data.data);
                           wx.navigateTo({
                             url: '../mine/mine',
                           })

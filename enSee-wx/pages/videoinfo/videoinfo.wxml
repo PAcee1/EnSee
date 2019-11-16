@@ -1,18 +1,18 @@
 <view style='width:100%;height:100%;'>
-  <video id="myVideo" src="http://192.168.0.104:8008/191114F38G8HC8SW/video/wxf05e200306a3f147.o6zAJsz9V3l2IQf3u4MJAtqnhf1Y.Ya4A5BrnPZdub4fa6fd038da74a9a5fb1a6b68df48af.MP4c8b4a842-b76d-4624-91d5-a2e02102502d.mp4" muted="{{true}}" autoplay="{{true}}" controls='{{false}}'
+  <video id="myVideo" src="{{src}}" muted="{{true}}" autoplay="{{true}}" controls='{{false}}'
     loop="{{true}}" enable-progress-gesture="{{false}}" style='width:100%;height:100%;' objectFit='{{cover}}'>
 
     <cover-view class='container'>
       <!-- 上传视频 -->
       <cover-image src='../resource/images/camera.png' style='width:50rpx;height:50rpx;' bindtap='upload'></cover-image>
       <!-- 搜索按钮 -->
-      <cover-image src='../resource/images/search.png' style='width:45rpx;height:45rpx;' bindtap='showSearch'></cover-image>
+      <cover-image src='../resource/images/search.png' style='width:50rpx;height:50rpx;' bindtap='showSearch'></cover-image>
     </cover-view>
 
 
     <cover-view class='container-me'>
       <!-- 头像 -->
-      <cover-image class="face" src='{{serverUrl}}{{publisher.faceImage}}' bindtap='showPublisher'></cover-image>
+      <cover-image class="face" src='{{serverUrl}}{{videoInfo.faceImage}}' bindtap='showPublisher'></cover-image>
       <!-- 喜欢收藏按钮 -->
       <block wx:if="{{userLikeVideo}}">
         <cover-image class="size-me" src='../resource/images/like.png' style='margin-top:30rpx;' bindtap='likeVideoOrNot'></cover-image>
@@ -27,7 +27,7 @@
     </cover-view>
 
     <cover-view class='container-words'>
-      <cover-view>@{{publisher.nickname}}</cover-view>
+      <cover-view>@{{videoInfo.nickname}}</cover-view>
       <cover-view class='video-desc'>{{videoInfo.videoDesc}}</cover-view>
     </cover-view>
 

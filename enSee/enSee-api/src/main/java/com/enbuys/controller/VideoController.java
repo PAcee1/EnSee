@@ -116,7 +116,7 @@ public class VideoController extends BasicController {
 
     /**
      * 查询全部视频列表
-     * @param desc 搜索时使用，查询描述
+     * @param videoDesc 搜索时使用，查询描述
      * @param isSaveRecord 用来判断是否保存到搜索词汇
      * @param page
      * @param size

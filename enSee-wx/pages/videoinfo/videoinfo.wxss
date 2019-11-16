@@ -65,16 +65,16 @@ page {
 }
 
 .index-bottom{
-  width: 60rpx;
-  height: 60rpx;
+  width: 50rpx;
+  height: 50rpx;
   bottom: 0px; 
   margin-left: 50rpx;
   margin-bottom: 50rpx;
   position: fixed;  
 }
 .mine-bottom{
-  width: 60rpx;
-  height: 60rpx;
+  width: 50rpx;
+  height: 50rpx;
   bottom: 0px; 
   right: 0px;
   margin-right: 50rpx;

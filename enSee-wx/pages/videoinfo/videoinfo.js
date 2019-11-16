@@ -4,13 +4,23 @@ const app = getApp()
 
 Page({
   data: {
-    cover: "cover"
+    cover: "cover",
+    src : "",
+    videoInfo : {},
+    serverUrl: ""
   },
 
   videoContent: {},
 
-  onLoad: function() {
+  onLoad: function(params) {
     var _this = this;
+    var videoInfo = JSON.parse(params.videoInfo);
+    console.log(videoInfo);
+    _this.setData({
+      src : app.serverUrl + videoInfo.videoPath,
+      videoInfo: videoInfo,
+      serverUrl: app.serverUrl 
+    })
     _this.videoContent = wx.createVideoContext("myVideo", _this);
   },
 
@@ -32,6 +42,13 @@ Page({
   showSearch: function() {
     wx.navigateTo({
       url: '../searchVideo/searchVideo',
+    })
+  },
+
+  // 返回主页
+  showIndex: function(){
+    wx.redirectTo({
+      url: '../index/index',
     })
   }
 

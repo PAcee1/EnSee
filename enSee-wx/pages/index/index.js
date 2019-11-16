@@ -20,6 +20,9 @@ Page({
     if (isSaveRecord == null || isSaveRecord == '' || isSaveRecord == undefined) {
       isSaveRecord = 0;
     }
+    if (videoDesc == null || videoDesc == '' || videoDesc == undefined) {
+      videoDesc = "";
+    }
 
     // 系统的屏幕宽度
     var screenWidth = wx.getSystemInfoSync().screenWidth;
@@ -109,6 +112,17 @@ Page({
           })
         }
       }
+    })
+  },
+
+  showVideoInfo : function(e){
+    var _this = this;
+    console.log(e);
+    var index = e.target.dataset.arrindex;
+    var videoInfo = JSON.stringify(_this.data.videosList[index]);
+
+    wx.redirectTo({
+      url: '../videoinfo/videoinfo?videoInfo=' + videoInfo,
     })
   }
 

@@ -13,7 +13,9 @@ public interface VideosCustomMapper extends MyMapper<VideosVO> {
      * @param videoDesc
      * @return
      */
-    List<VideosVO> queryAllVideosVO(@Param("videoDesc") String videoDesc);
+    List<VideosVO> queryAllVideosVO(@Param("videoDesc") String videoDesc,
+                                    @Param("userId") String userId,
+                                    @Param("likeType") String likeType);
 
     /**
      * 添加视频喜欢数量

@@ -17,7 +17,9 @@ public interface VideoService {
 
     void updateVideo(String videoId, String coverPath);
 
-    PagedResult queryAllVideosVO(String videoDesc,Integer isSaveRecord,Integer page,Integer size);
+    PagedResult queryAllVideosVO(String videoDesc,Integer isSaveRecord,
+                                 String userId,String likeType,
+                                 Integer page,Integer size);
 
     List<String> queryHotRecords();
 

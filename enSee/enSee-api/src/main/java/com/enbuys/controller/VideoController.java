@@ -114,7 +114,7 @@ public class VideoController extends BasicController {
         return JsonResult.ok(videoId);
     }
 
-    @ApiOperation(value = "用户取消点赞",notes = "用户取消点赞接口")
+    @ApiOperation(value = "查询所有视频",notes = "查询所有视频接口")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "查询关键词",name = "videoDesc",required = true,
                     paramType = "query",dataType = "String"),
@@ -127,6 +127,7 @@ public class VideoController extends BasicController {
     })
     @PostMapping("/queryAll")
     public JsonResult queryAll(String videoDesc,Integer isSaveRecord,
+                               String userId,String likeType,
                                Integer page,Integer size){
         // 如果为null，默认不保存
         if(isSaveRecord == null) {
@@ -138,7 +139,7 @@ public class VideoController extends BasicController {
         if(size == null){
             size = 5;
         }
-        return JsonResult.ok(videoService.queryAllVideosVO(videoDesc,isSaveRecord,page,size));
+        return JsonResult.ok(videoService.queryAllVideosVO(videoDesc,isSaveRecord,userId,likeType,page,size));
     }
 
     @ApiOperation(value = "查询热搜词",notes = "查询热搜词接口")

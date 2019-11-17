@@ -130,7 +130,7 @@ Page({
     var index = e.target.dataset.arrindex;
     var videoInfo = JSON.stringify(_this.data.videosList[index]);
 
-    wx.redirectTo({
+    wx.navigateTo({
       url: '../videoinfo/videoinfo?videoInfo=' + videoInfo,
     })
   }

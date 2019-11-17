@@ -21,7 +21,7 @@
     <result column="face_image" property="faceImage" jdbcType="VARCHAR" />
   </resultMap>
 
-  <select id="queryAllVideosVO" parameterType="String" resultMap="BaseResultMap">
+  <select id="queryAllVideosVO"  resultMap="BaseResultMap">
     SELECT
         V.*,
         U.NICKNAME as "nickname",
@@ -33,6 +33,12 @@
         1 = 1
     <if test="videoDesc != null and videoDesc != ''">
       AND V.VIDEO_DESC LIKE '%${videoDesc}%'
+    </if>
+    <if test="userId != null and userId != '' and likeType != 'true' ">
+      AND V.USER_ID LIKE #{userId}
+    </if>
+    <if test="likeType != null and likeType != 'null' and likeType == 'true' and userId != null and userId != ''">
+      AND V.ID IN (SELECT VIDEO_ID FROM users_like_videos WHERE USER_ID = #{userId})
     </if>
     AND V.STATUS = 1
     ORDER BY

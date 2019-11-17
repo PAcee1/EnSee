@@ -10,7 +10,18 @@ Page({
     id : '',
     nickname: "昵称",
     isSearch: "false",
-    isFollow : false
+    isFollow : false,
+
+    videoSelClass: "video-info",
+    isSelectedWork: "video-info-selected",
+    isSelectedLike: "",
+
+    videoList: [],
+    videoPage: 1,
+    videoTotal: 1,
+
+    size: 9,
+    videoFalg: false, // true显示作品，false显示喜欢
   },
 
   onLoad: function(params) {
@@ -94,7 +105,10 @@ Page({
           duration: 3000
         })
       }
-    })
+    });
+
+    // 加载作品列表
+    _this.queryAllVideo(1, null);
   },
 
   // 点击关注或取消关注按钮
@@ -282,6 +296,128 @@ Page({
   // 上传视频
   uploadVideo: function() {
     videoUtil.uploadVideo();
+  },
+
+  // 点击作品，样式修改
+  doSelectWork:function(){
+    var _this = this;
+    _this.setData({
+      isSelectedWork: 'video-info-selected',
+      isSelectedLike: '',
+      videoFalg: true,
+
+      videoList: [],
+      videoList: 1,
+      videoList: 1,
+    });
+    // 请求后端，获取所有作品
+    _this.queryAllVideo(1,null);
+  },
+
+  // 点击作品，样式修改
+  doSelectLike: function () {
+    var _this = this;
+    _this.setData({
+      isSelectedWork: '',
+      isSelectedLike: 'video-info-selected',
+      videoFalg: false,
+
+      videoList: [],
+      videoList: 1,
+      videoList: 1,
+    });
+    // 请求后端，获取所有收藏的作品
+    _this.queryAllVideo(1,"true");
+  },
+
+  // 查询视频列表
+  queryAllVideo: function(page,likeType){
+    var _this = this;
+    // 请求后端，获取videos集合
+    var serverUrl = app.serverUrl;
+    var userInfo = app.getGlobalUserInfo();
+    var size = _this.data.size;
+    wx.showLoading({
+      title: '加载中...',
+    });
+    wx.request({
+      url: serverUrl + '/video/queryAll?page=' + page +
+        '&size=' + size +
+        '&userId=' + userInfo.id +
+        '&likeType=' + likeType,
+      method: 'POST',
+      header: {
+        "content-type": "application/json"
+      },
+      success: function (res) {
+        wx.hideLoading();
+        wx.hideNavigationBarLoading(); // 停止导航栏加载动画
+        wx.stopPullDownRefresh(); //停止下拉后的三个丶
+        console.log(res.data);
+        if (res.data.status == 200) {
+          // 判断是否为第一页，如果是第一页，设置videos为空
+          if (page === 1) {
+            _this.setData({
+              videoList: []
+            })
+          }
+          // 保存新视频List与旧视频List，进行拼接
+          var oldVideosList = _this.data.videoList;
+          var newVideosList = res.data.data.rows;
+
+          _this.setData({
+            videoList: oldVideosList.concat(newVideosList),
+            videoPage: res.data.data.page,
+            videoTotal: res.data.data.total,
+            serverUrl: serverUrl
+          })
+        } else {
+          wx.showToast({
+            title: '查询出错，联系管理员',
+            icon: 'none',
+            duration: 3000
+          })
+        }
+      },
+      fail: function (res) {
+        console.log(res);
+        wx.hideLoading();
+        wx.showToast({
+          title: '系统异常，联系管理员',
+          icon: 'none',
+          duration: 3000
+        })
+      }
+    })
+  },
+
+  //点击转跳视频详情页面
+  showVideo : function(e){
+    console.log(e);
+    // 获取点击视频的index
+    var index = e.currentTarget.dataset.arrindex;
+    var videoInfo = JSON.stringify(this.data.videoList[index]);
+    wx.navigateTo({
+      url: '../videoinfo/videoinfo?videoInfo=' + videoInfo,
+    })
+  },
+
+  // 触底分页加载视频
+  onReachBottom: function(){
+    var _this = this;
+    // 判断是否是最后一页，如果是不加载
+    var totalPage = _this.data.videoTotal;
+    var currentPage = _this.data.videoPage;
+    var videoFlag = _this.data.videoFlag;
+    if(currentPage == totalPage){
+      wx.showToast({
+        title: '已经没有视频了',
+        icon: 'none',
+        duration: 2000
+      })
+    }else{
+      _this.queryAllVideo(currentPage + 1, videoFlag == true?"true":null);
+    }
   }
 
 })

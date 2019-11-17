@@ -24,7 +24,7 @@
     </block>
 
     <view class='container-row'>
-      <label class='info-items'>{{fansCounts}} 粉丝</label>
+      <label class='info-items first'>{{fansCounts}} 粉丝</label>
       <label class='info-items'>{{followCounts}} 关注</label>
       <label class='info-items'>{{receiveLikeCounts}} 获赞</label>
     </view>
@@ -33,3 +33,28 @@
 </view>
 
 <view class="line"></view>
+
+<view class='container-video'>
+  <!-- 发布过的作品 -->
+  <view class='{{videoSelClass}} {{isSelectedWork}}' bindtap='doSelectWork'>作品</view>
+  <!-- 收藏的点赞的视频 -->
+  <view class='{{videoSelClass}} {{isSelectedLike}}' bindtap='doSelectLike'>点赞</view>
+</view>
+
+<view class='container-video-list'>
+
+  <view wx:if='{{myWorkFalg}}'>
+    <block wx:for="{{videoList}}">
+      <image src='{{serverUrl}}{{item.coverPath}}' class='videoImage'
+       mode="aspectFill" bindtap='showVideo' data-arrindex='{{index}}'></image>
+    </block>
+  </view>
+
+  <view wx:if='{{!myWorkFalg}}'>
+    <block wx:for="{{videoList}}">
+      <image src='{{serverUrl}}{{item.coverPath}}' class='videoImage'
+       mode="aspectFill" bindtap='showVideo' data-arrIndex='{{index}}'></image>
+    </block>
+  </view>
+
+</view>

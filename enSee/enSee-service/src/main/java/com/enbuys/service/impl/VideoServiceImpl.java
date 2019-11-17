@@ -62,7 +62,9 @@ public class VideoServiceImpl implements VideoService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public PagedResult queryAllVideosVO(String videoDesc,Integer isSaveRecord,Integer page, Integer size) {
+    public PagedResult queryAllVideosVO(String videoDesc,Integer isSaveRecord,
+                                        String userId,String likeType,
+                                        Integer page, Integer size) {
         // 如果isSaveRecord为1，需要保存到搜索词汇中
         if(isSaveRecord == 1){
             SearchRecords searchRecords = new SearchRecords();
@@ -72,7 +74,7 @@ public class VideoServiceImpl implements VideoService {
         }
 
         PageHelper.startPage(page,size);
-        List<VideosVO> videosVOs = videosCustomMapper.queryAllVideosVO(videoDesc);
+        List<VideosVO> videosVOs = videosCustomMapper.queryAllVideosVO(videoDesc,userId,likeType);
         PageInfo pageInfo = new PageInfo(videosVOs);
 
         PagedResult pagedResult = new PagedResult();

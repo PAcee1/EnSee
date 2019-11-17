@@ -111,6 +111,15 @@ Page({
             duration: 3000
           })
         }
+      },
+      fail: function(res){
+        console.log(res);
+        wx.hideLoading();
+        wx.showToast({
+          title: '系统异常，联系管理员',
+          icon: 'none',
+          duration: 3000
+        })
       }
     })
   },

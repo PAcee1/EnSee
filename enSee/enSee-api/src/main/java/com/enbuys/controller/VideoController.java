@@ -114,14 +114,17 @@ public class VideoController extends BasicController {
         return JsonResult.ok(videoId);
     }
 
-    /**
-     * 查询全部视频列表
-     * @param videoDesc 搜索时使用，查询描述
-     * @param isSaveRecord 用来判断是否保存到搜索词汇
-     * @param page
-     * @param size
-     * @return
-     */
+    @ApiOperation(value = "用户取消点赞",notes = "用户取消点赞接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "查询关键词",name = "videoDesc",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "是否保存",name = "isSaveRecord",required = false,
+                    paramType = "query",dataType = "Integer"),
+            @ApiImplicitParam(value = "第几页",name = "page",required = false,
+                    paramType = "query",dataType = "Integer"),
+            @ApiImplicitParam(value = "每页数量",name = "size",required = false,
+                    paramType = "query",dataType = "Integer"),
+    })
     @PostMapping("/queryAll")
     public JsonResult queryAll(String videoDesc,Integer isSaveRecord,
                                Integer page,Integer size){
@@ -138,13 +141,40 @@ public class VideoController extends BasicController {
         return JsonResult.ok(videoService.queryAllVideosVO(videoDesc,isSaveRecord,page,size));
     }
 
-    /**
-     * 搜索热点词
-     * @return
-     */
+    @ApiOperation(value = "查询热搜词",notes = "查询热搜词接口")
     @PostMapping("/queryHotList")
     public JsonResult queryHotRecords(){
         return JsonResult.ok(videoService.queryHotRecords());
+    }
+
+    @ApiOperation(value = "用户点赞",notes = "用户点赞接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "视频Id",name = "videoId",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "视频创建者Id",name = "videoCreateId",required = true,
+                    paramType = "query",dataType = "String")
+    })
+    @PostMapping("/userLikeVideo")
+    public JsonResult userLikeVideo(String userId,String videoId,String videoCreateId){
+        videoService.userLikeVideo(userId,videoId,videoCreateId);
+        return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "用户取消点赞",notes = "用户取消点赞接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "视频Id",name = "videoId",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "视频创建者Id",name = "videoCreateId",required = true,
+                    paramType = "query",dataType = "String")
+    })
+    @PostMapping("/userUnLikeVideo")
+    public JsonResult userUnLikeVideo(String userId,String videoId,String videoCreateId){
+        videoService.userUnLikeVideo(userId,videoId,videoCreateId);
+        return JsonResult.ok();
     }
 
 

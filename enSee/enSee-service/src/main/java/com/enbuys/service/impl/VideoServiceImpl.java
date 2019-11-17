@@ -1,14 +1,10 @@
 package com.enbuys.service.impl;
 
-import com.enbuys.mapper.BgmMapper;
-import com.enbuys.mapper.SearchRecordsMapper;
-import com.enbuys.mapper.VideosCustomMapper;
-import com.enbuys.mapper.VideosMapper;
-import com.enbuys.pojo.Bgm;
+import com.enbuys.mapper.*;
 import com.enbuys.pojo.SearchRecords;
+import com.enbuys.pojo.UsersLikeVideos;
 import com.enbuys.pojo.Videos;
 import com.enbuys.pojo.vo.VideosVO;
-import com.enbuys.service.BgmService;
 import com.enbuys.service.VideoService;
 import com.enbuys.utils.PagedResult;
 import com.github.pagehelper.PageHelper;
@@ -18,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +35,10 @@ public class VideoServiceImpl implements VideoService {
     private VideosCustomMapper videosCustomMapper;
     @Autowired
     private SearchRecordsMapper searchRecordsMapper;
+    @Autowired
+    private UsersLikeVideosMapper usersLikeVideosMapper;
+    @Autowired
+    private UsersMapper usersMapper;
     @Autowired
     private Sid sid;
 
@@ -84,5 +87,40 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public List<String> queryHotRecords() {
         return searchRecordsMapper.queryHotRecords();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void userLikeVideo(String userId, String videoId,String videoCreateId) {
+        // 添加中间表
+        UsersLikeVideos usersLikeVideos = new UsersLikeVideos();
+        String id = Sid.next();
+        usersLikeVideos.setUserId(userId);
+        usersLikeVideos.setId(id);
+        usersLikeVideos.setVideoId(videoId);
+        usersLikeVideosMapper.insert(usersLikeVideos);
+
+        // 用户表添加
+        usersMapper.addUserLikeCounts(videoCreateId);
+
+        // video表添加
+        videosCustomMapper.addVideoLikeCounts(videoId);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void userUnLikeVideo(String userId, String videoId,String videoCreateId) {
+        // 删除中间表
+        Example example = new Example(UsersLikeVideos.class);
+        Criteria criteria =  example.createCriteria();
+        criteria.andEqualTo("userId",userId);
+        criteria.andEqualTo("videoId",videoId);
+        usersLikeVideosMapper.deleteByExample(example);
+
+        // 用户表减少
+        usersMapper.reduceUserLikeCounts(videoCreateId);
+
+        // video表减少
+        videosCustomMapper.reduceVideoLikeCounts(videoId);
     }
 }

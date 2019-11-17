@@ -18,4 +18,12 @@ public interface UserService {
     Users findUserByPassword(Users users);
 
     void updateUserById(Users users);
+
+    Boolean isLiked(String userId,String videoId);
+
+    void addFollowFans(String userId,String fansId);
+
+    void reduceFollowFans(String userId,String fansId);
+
+    Boolean isFollow(String userId,String fansId);
 }

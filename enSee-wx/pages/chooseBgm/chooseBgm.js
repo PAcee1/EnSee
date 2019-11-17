@@ -10,7 +10,7 @@ Page({
   onLoad: function(params) {
     var _this = this;
     var serverUrl = app.serverUrl;
-
+    var userInfo = app.getGlobalUserInfo();
     // 保存传来的视频信息
     console.log(params);
     _this.setData({
@@ -24,7 +24,9 @@ Page({
       url: serverUrl + '/bgm/list',
       method: 'POST',
       header: {
-        "content-type": "application/json"
+        "content-type": "application/json",
+        "userId": userInfo.id,
+        "userToken": userInfo.userToken
       },
       success: function(res) {
         console.log(res.data);
@@ -34,7 +36,18 @@ Page({
             bgmList: res.data.data,
             serverUrl: serverUrl
           })
-        } else {
+        } else if (data.status == 502) {
+          wx.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: 3000,
+            success: function () {
+              wx.redirectTo({
+                url: '../userLogin/login',
+              })
+            }
+          });
+        }else {
           wx.showToast({
             title: '出错了，联系管理员',
             icon: 'none',
@@ -69,7 +82,9 @@ Page({
       filePath: _this.data.videoObj.tempFilePath,
       name: 'file',
       header: {
-        "content-type": "application/json"
+        "content-type": "application/json",
+        "userId": userInfo.id,
+        "userToken": userInfo.userToken
       },
       success: function(res) {
         wx.hideLoading();
@@ -83,6 +98,17 @@ Page({
           wx.navigateBack({
             delta: 1
           })
+        } else if (data.status == 502) {
+          wx.showToast({
+            title: data.msg,
+            icon: 'none',
+            duration: 3000,
+            success: function () {
+              wx.redirectTo({
+                url: '../userLogin/login',
+              })
+            }
+          });
         } else {
           wx.showToast({
             title: '上传失败',

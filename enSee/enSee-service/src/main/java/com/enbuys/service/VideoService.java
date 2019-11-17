@@ -20,4 +20,8 @@ public interface VideoService {
     PagedResult queryAllVideosVO(String videoDesc,Integer isSaveRecord,Integer page,Integer size);
 
     List<String> queryHotRecords();
+
+    void userLikeVideo(String userId,String videoId,String videoCreateId);
+
+    void userUnLikeVideo(String userId,String videoId,String videoCreateId);
 }

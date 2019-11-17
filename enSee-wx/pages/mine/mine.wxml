@@ -1,13 +1,27 @@
 <view>
 
   <view class='container'>
-    <image src="{{faceUrl}}" class="face" bindtap='changeFace'></image>
+    <block wx:if="{{isSearch == 'true'}}">
+      <image src="{{faceUrl}}" class="face"></image>
+    </block>
+    <block wx:if="{{isSearch == 'false'}}">
+      <image src="{{faceUrl}}" class="face" bindtap='changeFace'></image>
+    </block>
     <label class='nickname'>{{nickname}}</label>
 
-    
+    <block wx:if="{{isSearch == 'true'}}">
+      <block wx:if="{{!isFollow}}">
+        <button size='mini' type="primary" class='follow' data-followType='0' bindtap='followMe'>关注</button>
+      </block>
+      <block wx:if="{{isFollow}}">
+        <button size='mini' class='follow' data-followType='1' bindtap='followMe'>已关注</button>
+      </block>
+
+    </block>
+    <block wx:if="{{isSearch == 'false'}}">
       <button size='mini' class='primary' bindtap='uploadVideo'> 上传作品</button>
       <button size='mini' type='' class='logout' bindtap='logout'>登出</button>
-    
+    </block>
 
     <view class='container-row'>
       <label class='info-items'>{{fansCounts}} 粉丝</label>
@@ -19,4 +33,3 @@
 </view>
 
 <view class="line"></view>
-

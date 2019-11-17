@@ -7,10 +7,11 @@ import com.enbuys.utils.FileUpload;
 import com.enbuys.utils.JsonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +37,7 @@ public class UserController extends BasicController {
     @PostMapping("/regist")
     public JsonResult regist(@RequestBody Users users){
         // 判断用户名密码是否为空
-        if(StringUtils.isEmpty(users.getUsername()) || StringUtils.isEmpty(users.getPassword())){
+        if(StringUtils.isBlank(users.getUsername()) || StringUtils.isBlank(users.getPassword())){
             return JsonResult.errorMsg("用户名或密码不能为空");
         }
 
@@ -58,7 +59,7 @@ public class UserController extends BasicController {
     @ApiOperation(value = "用户登录",notes = "用户登录接口")
     @PostMapping("/login")
     public JsonResult login(@RequestBody Users users){
-        if(StringUtils.isEmpty(users.getUsername()) || StringUtils.isEmpty(users.getPassword())){
+        if(StringUtils.isBlank(users.getUsername()) || StringUtils.isBlank(users.getPassword())){
             return  JsonResult.errorMsg("用户名或密码不能为空");
         }
 
@@ -79,7 +80,7 @@ public class UserController extends BasicController {
             paramType = "query",dataType = "String")
     @PostMapping("/logout")
     public JsonResult logout(String userId){
-        if(StringUtils.isEmpty(userId)){
+        if(StringUtils.isBlank(userId)){
             return JsonResult.errorMsg("用户ID为空，登出失败");
         }
         redis.del(USER_REDIS_SESSION + ":" +userId);
@@ -90,14 +91,17 @@ public class UserController extends BasicController {
     @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
             paramType = "query",dataType = "String")
     @PostMapping("/getUserInfo")
-    public JsonResult getUserInfo(String userId){
-        if(StringUtils.isEmpty(userId)){
+    public JsonResult getUserInfo(String userId,String fansId){
+        if(StringUtils.isBlank(userId)){
             return JsonResult.errorMsg("用户ID为空，获取失败");
         }
 
         Users user = userService.queryUserById(userId);
         UsersVO usersVo = new UsersVO();
         BeanUtils.copyProperties(user,usersVo);
+
+        Boolean isFollow = userService.isFollow(userId, fansId);
+        usersVo.setIsFollow(isFollow);
         return JsonResult.ok(usersVo);
     }
 
@@ -107,7 +111,7 @@ public class UserController extends BasicController {
     @PostMapping("/uploadFace")
     public JsonResult uploadFace(String userId,
                          @RequestParam("file") MultipartFile[] files) throws Exception{
-        if(StringUtils.isEmpty(userId)){
+        if(StringUtils.isBlank(userId)){
             return JsonResult.errorMsg("头像更新失败");
         }
         // 定义上传到的文件夹路径
@@ -131,6 +135,57 @@ public class UserController extends BasicController {
         userService.updateUserById(users);
 
         return JsonResult.ok(uploadPathDB);
+    }
+
+    @ApiOperation(value = "查询用户是否点赞视频",notes = "查询用户是否点赞视频接口")
+    @ApiImplicitParams({
+        @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
+                paramType = "query",dataType = "String"),
+        @ApiImplicitParam(value = "视频Id",name = "videoId",required = true,
+                    paramType = "query",dataType = "String")
+    })
+    @PostMapping("queryIsLiked")
+    public JsonResult queryIsLiked(String userId,String videoId){
+        // 如果为空，说明用户未登录，返回false
+        if(StringUtils.isBlank(userId) || StringUtils.isBlank(videoId)){
+            return JsonResult.ok(false);
+        }
+        Boolean isLiked = userService.isLiked(userId, videoId);
+        return JsonResult.ok(isLiked);
+    }
+
+    @ApiOperation(value = "关注",notes = "关注接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "粉丝Id",name = "fansId",required = true,
+                    paramType = "query",dataType = "String")
+    })
+    @PostMapping("addFollowFans")
+    public JsonResult addFollowFans(String userId,String fansId){
+        // 如果为空，说明用户未登录，返回false
+        if(StringUtils.isBlank(userId) || StringUtils.isBlank(fansId)){
+            return JsonResult.errorMsg("");
+        }
+        userService.addFollowFans(userId, fansId);
+        return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "取消关注",notes = "取消关注接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "用户Id",name = "userId",required = true,
+                    paramType = "query",dataType = "String"),
+            @ApiImplicitParam(value = "粉丝Id",name = "fansId",required = true,
+                    paramType = "query",dataType = "String")
+    })
+    @PostMapping("reduceFollowFans")
+    public JsonResult reduceFollowFans(String userId,String fansId){
+        // 如果为空，说明用户未登录，返回false
+        if(StringUtils.isBlank(userId) || StringUtils.isBlank(fansId)){
+            return JsonResult.errorMsg("");
+        }
+        userService.reduceFollowFans(userId, fansId);
+        return JsonResult.ok();
     }
 
     /**

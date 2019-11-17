@@ -36,6 +36,14 @@
     </if>
     AND V.STATUS = 1
     ORDER BY
-        V.CREATE_TIME
+        V.CREATE_TIME DESC
   </select>
+
+  <update id="addVideoLikeCounts" parameterType="String">
+    update VIDEOS set like_counts = like_counts + 1 where id = #{videoId}
+  </update>
+
+  <update id="reduceVideoLikeCounts" parameterType="String">
+    update VIDEOS set like_counts = like_counts - 1 where id = #{videoId}
+  </update>
 </mapper>

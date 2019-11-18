@@ -7,16 +7,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * 
- * @Title: JsonUtils.java
- * @Package com.lee.utils
- * @Description: 自定义响应结构, 转换类
- * Copyright: Copyright (c) 2016
- * Company:Nathan.Lee.Salvatore
- * 
- * @author leechenxiang
- * @date 2016年4月29日 下午11:05:03
- * @version V1.0
+ * JsonUtil
  */
 public class JsonUtils {
 
@@ -44,7 +35,7 @@ public class JsonUtils {
      * 将json结果集转化为对象
      * 
      * @param jsonData json数据
-     * @param clazz 对象中的object类型
+     * @param beanType 对象中的object类型
      * @return
      */
     public static <T> T jsonToPojo(String jsonData, Class<T> beanType) {

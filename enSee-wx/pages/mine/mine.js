@@ -83,13 +83,13 @@ Page({
           wx.showToast({
             title: data.msg,
             icon: 'none',
-            duration: 3000,
-            success: function () {
-              wx.redirectTo({
-                url: '../userLogin/login',
-              })
-            }
+            duration: 2000
           })
+          setTimeout(function () {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
         }else{
           wx.showToast({
             title: '系统异常，请联系管理员',
@@ -157,13 +157,13 @@ Page({
           wx.showToast({
             title: res.data.msg,
             icon: 'none',
-            duration: 3000,
-            success: function () {
-              wx.redirectTo({
-                url: '../userLogin/login',
-              })
-            }
-          })
+            duration: 2000
+          });
+          setTimeout(function () {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
         }
       }
     })
@@ -198,13 +198,13 @@ Page({
           wx.showToast({
             title: res.data.msg,
             icon: 'none',
-            duration: 3000,
-            success: function () {
-              wx.redirectTo({
-                url: '../userLogin/login',
-              })
-            }
+            duration: 2000
           })
+          setTimeout(function () {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
         }else {
           wx.showToast({
             title: res.data.msg,
@@ -267,13 +267,13 @@ Page({
               wx.showToast({
                 title: res.data.msg,
                 icon: 'none',
-                duration: 3000,
-                success: function () {
-                  wx.redirectTo({
-                    url: '../userLogin/login',
-                  })
-                }
+                duration: 2000
               })
+              setTimeout(function () {
+                wx.redirectTo({
+                  url: '../userLogin/login',
+                })
+              }, 2000)
             }else {
               wx.showToast({
                 title: '更换头像失败',

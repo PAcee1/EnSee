@@ -5,10 +5,10 @@ const app = getApp()
 Page({
   data: {
     cover: "cover",
-    src : "",
-    videoInfo : {},
+    src: "",
+    videoInfo: {},
     serverUrl: "",
-    userLikeVideo : false
+    userLikeVideo: false
   },
 
   videoContent: {},
@@ -27,24 +27,24 @@ Page({
     _this.videoContent = wx.createVideoContext("myVideo", _this);
     // 如果用户未登录，设置id为空
     var userId = "";
-    if(user != undefined || user != null || user != ''){
+    if (user != undefined || user != null || user != '') {
       userId = user.id;
     }
 
     // 请求后端，获取用户是否点赞
     wx.request({
-      url: serverUrl + '/user/queryIsLiked?userId=' + userId 
-          + '&videoId=' + videoInfo.id,
+      url: serverUrl + '/user/queryIsLiked?userId=' + userId +
+        '&videoId=' + videoInfo.id,
       method: 'POST',
       header: {
-        "content-type" : "application/json"
+        "content-type": "application/json"
       },
-      success: function(res){
+      success: function(res) {
         // 成功，设置userLikeVideo为返回结果，true or false
         console.log(res);
-        if(res.data.status == 200){
+        if (res.data.status == 200) {
           _this.setData({
-            userLikeVideo:res.data.data
+            userLikeVideo: res.data.data
           })
         }
       }
@@ -62,20 +62,20 @@ Page({
   },
 
   // 上传视频
-  upload:function(){
+  upload: function() {
     var user = app.getGlobalUserInfo();
     var info = JSON.stringify(this.data.videoInfo);
     if (user.id == undefined || user.id == '' || user.id == null) {
       wx.navigateTo({
         url: '../userLogin/login?from=upload&info=' + info,
       })
-    }else{
+    } else {
       vedioUtil.uploadVideo();
     }
   },
 
   // 查看视频作者信息
-  showPublisher : function(){
+  showPublisher: function() {
     // 跳转mine页面
     var publishId = this.data.videoInfo.userId;
     wx.navigateTo({
@@ -91,20 +91,20 @@ Page({
   },
 
   // 返回主页
-  showIndex: function(){
+  showIndex: function() {
     wx.redirectTo({
       url: '../index/index',
     })
   },
 
   // 去個人中心
-  showMine : function(){
+  showMine: function() {
     var user = app.getGlobalUserInfo();
-    if(user.id == undefined || user.id == '' || user.id == null){
+    if (user.id == undefined || user.id == '' || user.id == null) {
       wx.navigateTo({
         url: '../userLogin/login',
       })
-    }else{
+    } else {
       wx.navigateTo({
         url: '../mine/mine',
       })
@@ -112,42 +112,103 @@ Page({
   },
 
   // 用户点赞视频
-  likeVideoOrNot : function(){
+  likeVideoOrNot: function() {
     var _this = this;
     var videoInfo = _this.data.videoInfo;
     var serverUrl = app.serverUrl;
     var user = app.getGlobalUserInfo();
+    var info = JSON.stringify(this.data.videoInfo);
     if (user.id == undefined || user.id == '' || user.id == null) {
       wx.navigateTo({
-        url: '../userLogin/login',
+        url: '../userLogin/login?from=upload&info=' + info,
       })
       return;
     }
 
     // 拼接url地址
-    var url = serverUrl + "/video/userLikeVideo?userId=" + user.id
-        + "&videoId=" + videoInfo.id
-        + "&videoCreateId=" + videoInfo.userId;
-    if (_this.data.userLikeVideo){
+    var url = serverUrl + "/video/userLikeVideo?userId=" + user.id +
+      "&videoId=" + videoInfo.id +
+      "&videoCreateId=" + videoInfo.userId;
+    if (_this.data.userLikeVideo) {
       // 如果已经喜欢了视频，需要改为取消点赞
-      var url = serverUrl + "/video/userUnLikeVideo?userId=" + user.id
-        + "&videoId=" + videoInfo.id
-        + "&videoCreateId=" + videoInfo.userId;
+      var url = serverUrl + "/video/userUnLikeVideo?userId=" + user.id +
+        "&videoId=" + videoInfo.id +
+        "&videoCreateId=" + videoInfo.userId;
     }
 
     wx.request({
       url: url,
       method: 'POST',
-      header:{
+      header: {
         "content-type": "application/json"
       },
-      success: function(res){
+      success: function(res) {
         // 成功将点赞状态修改
         _this.setData({
           userLikeVideo: !_this.data.userLikeVideo
         })
       }
     })
+  },
+
+  // 用户点击分享按钮
+  shareMe: function() {
+    var _this = this;
+    var videoInfo = _this.data.videoInfo;
+    wx.showActionSheet({
+      itemList: ['下载视频', '举报视频'],
+      success(res) {
+        console.log(res.tapIndex);
+        if (res.tapIndex == 0) { // 下载视频
+          wx.showLoading({
+            title: '下载中...',
+          })
+          wx.downloadFile({
+            url: app.serverUrl + videoInfo.videoPath, //仅为示例，并非真实的资源
+            success(res) {
+              // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
+              if (res.statusCode === 200) {
+                console.log(res.tempFilePath);
+                // 保存视频到相册
+                wx.saveVideoToPhotosAlbum({
+                  filePath: res.tempFilePath,
+                  success: function(res) {
+                    console.log(res);
+                    debugger
+                    if (res.status == 200) {
+                      wx.showToast({
+                        title: '下载成功',
+                        duration: 2000
+                      })
+                    }
+                  }
+                })
+              }
+            }
+          })
+        } else if (res.tapIndex == 1) { // 举报视频
+          // 转跳举报页面，传递视频id与创建者id
+          var videoId = videoInfo.id;
+          var publishId = videoInfo.userId;
+          wx.navigateTo({
+            url: '../report/report?videoId=' + videoId +
+              '&publishId=' + publishId,
+          })
+        }
+      },
+      fail(res) {
+        console.log(res.errMsg)
+      }
+    })
+  },
+
+  // 转发
+  onShareAppMessage: function(res) {
+    var videoInfo = JSON.stringify(this.data.videoInfo);
+    return {
+      title: '嗯看视频',
+      path: '/pages/videinfo/videoinfo?videoInfo=' + videoInfo
+    }
   }
 
 })

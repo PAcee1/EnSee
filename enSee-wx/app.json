@@ -6,7 +6,7 @@
     "pages/mine/mine",
     "pages/userLogin/login",
     "pages/chooseBgm/chooseBgm",
-    
+    "pages/report/report",
     "pages/userRegist/regist",
     "pages/searchVideo/searchVideo"
   ],

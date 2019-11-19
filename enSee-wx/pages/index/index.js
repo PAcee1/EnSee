@@ -133,6 +133,14 @@ Page({
     wx.navigateTo({
       url: '../videoinfo/videoinfo?videoInfo=' + videoInfo,
     })
+  },
+
+  // 转发
+  onShareAppMessage: function (res) {
+    return {
+      title: '嗯看视频',
+      path: '/pages/index/index'
+    }
   }
 
 })

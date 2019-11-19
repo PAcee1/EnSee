@@ -40,13 +40,13 @@ Page({
           wx.showToast({
             title: data.msg,
             icon: 'none',
-            duration: 3000,
-            success: function () {
-              wx.redirectTo({
-                url: '../userLogin/login',
-              })
-            }
+            duration: 2000
           });
+          setTimeout(function () {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
         }else {
           wx.showToast({
             title: '出错了，联系管理员',
@@ -102,13 +102,13 @@ Page({
           wx.showToast({
             title: data.msg,
             icon: 'none',
-            duration: 3000,
-            success: function () {
-              wx.redirectTo({
-                url: '../userLogin/login',
-              })
-            }
+            duration: 2000
           });
+          setTimeout(function () {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
         } else {
           wx.showToast({
             title: '上传失败',

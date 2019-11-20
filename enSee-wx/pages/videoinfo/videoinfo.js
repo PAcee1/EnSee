@@ -24,6 +24,13 @@ Page({
   videoContent: {},
 
   onLoad: function(params) {
+    // 评论弹出层动画创建
+    this.animation = wx.createAnimation({
+      duration: 400,
+      timingFunction: "ease",
+      delay: 0
+    })
+    this.animation.bottom("0rpx").height("100%").step();
     var _this = this;
     var serverUrl = app.serverUrl;
     var user = app.getGlobalUserInfo();
@@ -255,7 +262,9 @@ Page({
           comment: comment
         },
         header:{
-          "content-type":"application/json"
+          "content-type":"application/json",
+          "userId": userInfo.id,
+          "userToken": userInfo.userToken
         },
         success:function(res){
           if(res.data.status == 200){

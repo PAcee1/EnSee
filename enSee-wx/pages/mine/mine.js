@@ -85,11 +85,9 @@ Page({
             icon: 'none',
             duration: 2000
           })
-          setTimeout(function () {
-            wx.redirectTo({
-              url: '../userLogin/login',
-            })
-          }, 2000)
+          wx.redirectTo({
+            url: '../userLogin/login',
+          })
         }else{
           wx.showToast({
             title: '系统异常，请联系管理员',

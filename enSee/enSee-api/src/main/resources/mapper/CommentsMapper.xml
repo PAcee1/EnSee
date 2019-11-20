@@ -13,4 +13,31 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
   </resultMap>
+
+  <resultMap id="VOResultMap" type="com.enbuys.pojo.vo.CommentsVO" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="father_comment_id" property="fatherCommentId" jdbcType="VARCHAR" />
+    <result column="to_user_id" property="toUserId" jdbcType="VARCHAR" />
+    <result column="video_id" property="videoId" jdbcType="VARCHAR" />
+    <result column="from_user_id" property="fromUserId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="comment" property="comment" jdbcType="LONGVARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="face_image" property="faceImage" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryComments" parameterType="String" resultMap="VOResultMap">
+      SELECT
+          C.*, U.FACE_IMAGE,
+          U.NICKNAME
+      FROM
+          COMMENTS C
+      LEFT JOIN USERS U ON C.FROM_USER_ID = U.ID
+      WHERE
+          C.VIDEO_ID = #{videoId}
+      ORDER BY C.CREATE_TIME DESC
+  </select>
 </mapper>

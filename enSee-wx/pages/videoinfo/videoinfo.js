@@ -8,7 +8,17 @@ Page({
     src: "",
     videoInfo: {},
     serverUrl: "",
-    userLikeVideo: false
+    userLikeVideo: false,
+
+    commentsPage: 1,
+    commentsSize : 5,
+    commentsTotalPage: 1,
+    commentsList: [],
+
+    contentValue: "",
+
+
+    placeholder: "说点什么..."
   },
 
   videoContent: {},
@@ -48,7 +58,10 @@ Page({
           })
         }
       }
-    })
+    });
+
+    // 加载留言
+    _this.queryComments(1);
   },
 
   onShow: function() {
@@ -209,6 +222,107 @@ Page({
       title: '嗯看视频',
       path: '/pages/videinfo/videoinfo?videoInfo=' + videoInfo
     }
+  },
+
+  // 点击评论按钮，使评论框聚焦
+  leaveComment : function(){
+    this.setData({
+      commentFocus: true
+    })
+  },
+
+  // 保存留言
+  saveComment : function(e){
+    console.log(e);
+    var comment = e.detail.value;
+    // 判断是否登录
+    var _this = this;
+    var videoInfo = _this.data.videoInfo;
+    var serverUrl = app.serverUrl;
+    var user = app.getGlobalUserInfo();
+    var info = JSON.stringify(this.data.videoInfo);
+    if (user.id == undefined || user.id == '' || user.id == null) {
+      wx.navigateTo({
+        url: '../userLogin/login?from=upload&info=' + info,
+      })
+    }else{
+      wx.request({
+        url: serverUrl + '/comment/save?',
+        method: 'POST',
+        data:{
+          videoId: videoInfo.id,
+          fromUserId : user.id,
+          comment: comment
+        },
+        header:{
+          "content-type":"application/json"
+        },
+        success:function(res){
+          if(res.data.status == 200){
+            wx.showToast({
+              title: '评论成功',
+            });
+            // 刷新评论并且设置input框为空
+            _this.setData({
+              contentValue: "",
+              commentsList: []
+            });
+            _this.queryComments(1);
+          }else{
+            wx.showToast({
+              title: '评论失败',
+              icon: 'none'
+            })
+          }
+        }
+
+      })
+    }
+  },
+
+  // 查看留言
+  queryComments: function(page){
+    var _this = this;
+    var videoInfo = _this.data.videoInfo;
+    var serverUrl = app.serverUrl;
+    // var page = _this.data.commentsPage;
+    var size = _this.data.commentsSize;
+    wx.request({
+      url: serverUrl + '/comment/query?videoId=' + videoInfo.id
+          + '&page=' + page
+          + '&size=' + size,
+      method: 'POST',
+      header: {
+        "content-type": "application/json"
+      },
+      success: function(res){
+        console.log(res);
+        var data = res.data;
+        if(data.status == 200){
+          var commentsList = data.data.rows;
+          var oldCommentsList = _this.data.commentsList; // 旧的集合，将新的拼接起来
+
+          _this.setData({
+            commentsList: oldCommentsList.concat(commentsList),
+            commentsPage: page,
+            commentsTotalPage: res.data.data.total
+          });
+        }
+      }
+    })
+  },
+
+  // 上拉分页加载留言
+  onReachBottom: function(res){
+    var _this = this;
+    var currentPage = _this.data.commentsPage;
+    var totalPage = _this.data.commentsTotalPage;
+    // 如果是最后一页，不做任何操作
+    if (currentPage === totalPage) {
+      return;
+    }
+    var page = currentPage + 1;
+    _this.queryComments(page);
   }
 
 })

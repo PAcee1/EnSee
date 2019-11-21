@@ -1,14 +1,14 @@
 <view style='width:100%;height:100%;'>
-  <video id="myVideo" src="{{src}}" muted="{{true}}" autoplay="{{true}}" controls='{{false}}' loop="{{false}}" enable-progress-gesture="{{false}}" style='width:100%;height:100%;' objectFit='{{cover}}'>
+  <video id="myVideo" src="{{src}}" muted="{{true}}" autoplay="{{true}}" controls='{{false}}' loop="{{true}}" enable-progress-gesture="{{false}}" style='width:100%;height:100%;' objectFit='{{cover}}'>
 
-    <cover-view class='container'>
+    <cover-view class='container' hidden="{{talkHidden}}">
       <!-- 上传视频 -->
       <cover-image src='../resource/images/camera.png' style='width:50rpx;height:50rpx;' bindtap='upload'></cover-image>
       <!-- 搜索按钮 -->
       <cover-image src='../resource/images/search.png' style='width:50rpx;height:50rpx;' bindtap='showSearch'></cover-image>
     </cover-view>
 
-    <cover-view class='container-me'>
+    <cover-view class='container-me' hidden="{{talkHidden}}">
       <!-- 头像 -->
       <cover-image class="face" src='{{serverUrl}}{{videoInfo.faceImage}}' bindtap='showPublisher'></cover-image>
       <!-- 喜欢收藏按钮 -->
@@ -24,95 +24,45 @@
       <cover-image class="size-me" src='../resource/images/share.png' style='margin-top:30rpx;' bindtap='shareMe'></cover-image>
     </cover-view>
 
-    <cover-view class='container-words'>
+    <cover-view class='container-words' hidden="{{talkHidden}}">
       <cover-view>@{{videoInfo.nickname}}</cover-view>
       <cover-view class='video-desc'>{{videoInfo.videoDesc}}</cover-view>
     </cover-view>
 
     <!-- 首页按钮 -->
-    <cover-image class='' src='../resource/images/index.png' class="index-bottom" bindtap='showIndex'></cover-image>
+    <cover-image class='' src='../resource/images/index.png' class="index-bottom" bindtap='showIndex' hidden="{{talkHidden}}"></cover-image>
     <!-- 我的按钮 -->
-    <cover-image class='' src='../resource/images/mine.png' class="mine-bottom" bindtap='showMine'></cover-image>
+    <cover-image class='' src='../resource/images/mine.png' class="mine-bottom" bindtap='showMine' hidden="{{talkHidden}}"></cover-image>
 
   </video>
 </view>
 
 <!-- 评论 -->
-<view class='talks-layer'>
+<view class='{{talkViewClass}}'>
   <view class='layer-white-space' bindtap='hideTalks'>
   </view>
   <view class='talks'>
     <view class='talk-header'>
-      <view class='talk-count'>2条评论</view>
-      <image src='/image/close.png' class='talk-close' bindtap='hideTalks'></image>
+      <view class='talk-count'>{{commentsSum}}条评论</view>
+      <image src='../resource/images/close.png' class='talk-close' bindtap='hideTalks'></image>
     </view>
 
     <scroll-view class='talk-body' scroll-y="true" bindscrolltolower="onScrollLoad">
-      <view class='talk-item'>
+      <view class='talk-item' wx:for="{{commentsList}}" wx:key="*this">
         <view class='talk-item-left'>
-          <image class='talk-item-face' src='https://avatar.csdnimg.cn/5/7/6/1_pacee1.jpg'></image>
+          <image class='talk-item-face' src='{{serverUrl}}{{item.faceImage}}'></image>
         </view>
         <view class='talk-item-right'>
-          <text class='talk-item-nickname'>qwe</text>
-          <text class='talk-item-content'>防守打法</text>
-          <text class='talk-item-time'>111</text>
-        </view>
-      </view>
-      <view class='talk-item'>
-        <view class='talk-item-left'>
-          <image class='talk-item-face' src='https://avatar.csdnimg.cn/5/7/6/1_pacee1.jpg'></image>
-        </view>
-        <view class='talk-item-right'>
-          <text class='talk-item-nickname'>qwe</text>
-          <text class='talk-item-content'>防守打法</text>
-          <text class='talk-item-time'>111</text>
-        </view>
-      </view>
-      <view class='talk-item'>
-        <view class='talk-item-left'>
-          <image class='talk-item-face' src='https://avatar.csdnimg.cn/5/7/6/1_pacee1.jpg'></image>
-        </view>
-        <view class='talk-item-right'>
-          <text class='talk-item-nickname'>qwe</text>
-          <text class='talk-item-content'>防守打法</text>
-          <text class='talk-item-time'>111</text>
-        </view>
-      </view>
-      <view class='talk-item'>
-        <view class='talk-item-left'>
-          <image class='talk-item-face' src='https://avatar.csdnimg.cn/5/7/6/1_pacee1.jpg'></image>
-        </view>
-        <view class='talk-item-right'>
-          <text class='talk-item-nickname'>qwe</text>
-          <text class='talk-item-content'>防守打法</text>
-          <text class='talk-item-time'>111</text>
-        </view>
-      </view>
-      <view class='talk-item'>
-        <view class='talk-item-left'>
-          <image class='talk-item-face' src='https://avatar.csdnimg.cn/5/7/6/1_pacee1.jpg'></image>
-        </view>
-        <view class='talk-item-right'>
-          <text class='talk-item-nickname'>qwe</text>
-          <text class='talk-item-content'>防守打法</text>
-          <text class='talk-item-time'>111</text>
-        </view>
-      </view>
-      <view class='talk-item'>
-        <view class='talk-item-left'>
-          <image class='talk-item-face' src='https://avatar.csdnimg.cn/5/7/6/1_pacee1.jpg'></image>
-        </view>
-        <view class='talk-item-right'>
-          <text class='talk-item-nickname'>qwe</text>
-          <text class='talk-item-content'>防守打法</text>
-          <text class='talk-item-time'>111</text>
+          <text class='talk-item-nickname'>{{item.nickname}}</text>
+          <text class='talk-item-content'>{{item.comment}}</text>
+          <text class='talk-item-time'>{{item.timeAgoStr}}</text>
         </view>
       </view>
     </scroll-view>
 
 
     <view class='talk-footer'>
-      <input class='talk-input' type='text' bindinput='talkInput' bindconfirm='talkConfirm' placeholder='有爱评论，说点儿好听的~' value='{{inputTalk}}'></input>
+      <input class='talk-input' type='text' bindinput='talkInput' bindconfirm='saveComment' placeholder='有爱评论，说点儿好听的~' value='{{contentValue}}'></input>
     </view>
   </view>
 </view>

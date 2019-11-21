@@ -11,11 +11,14 @@ Page({
     userLikeVideo: false,
 
     commentsPage: 1,
-    commentsSize : 5,
+    commentsSize : 7777, // 暂时不做分页
     commentsTotalPage: 1,
+    commentsSum: 0,
     commentsList: [],
 
     contentValue: "",
+    talkViewClass:"talks-layer",
+    talkHidden: false,
 
 
     placeholder: "说点什么..."
@@ -67,8 +70,6 @@ Page({
       }
     });
 
-    // 加载留言
-    _this.queryComments(1);
   },
 
   onShow: function() {
@@ -231,10 +232,24 @@ Page({
     }
   },
 
-  // 点击评论按钮，使评论框聚焦
+  // 点击评论按钮，显示留言框
   leaveComment : function(){
+    this.onHide();
     this.setData({
-      commentFocus: true
+      talkViewClass: "talks-layer-show",
+      talkHidden : true
+    })
+    // 加载留言
+    this.queryComments(1);
+  },
+  // 关闭评论，清空留言list并设置为第一页
+  hideTalks: function () {
+    this.onShow();
+    this.setData({
+      talkViewClass: "talks-layer",
+      talkHidden: false,
+      commentsList: [],
+      commentsPage: 1
     })
   },
 
@@ -242,51 +257,71 @@ Page({
   saveComment : function(e){
     console.log(e);
     var comment = e.detail.value;
-    // 判断是否登录
-    var _this = this;
-    var videoInfo = _this.data.videoInfo;
-    var serverUrl = app.serverUrl;
-    var user = app.getGlobalUserInfo();
-    var info = JSON.stringify(this.data.videoInfo);
-    if (user.id == undefined || user.id == '' || user.id == null) {
-      wx.navigateTo({
-        url: '../userLogin/login?from=upload&info=' + info,
-      })
-    }else{
-      wx.request({
-        url: serverUrl + '/comment/save?',
-        method: 'POST',
-        data:{
-          videoId: videoInfo.id,
-          fromUserId : user.id,
-          comment: comment
-        },
-        header:{
-          "content-type":"application/json",
-          "userId": userInfo.id,
-          "userToken": userInfo.userToken
-        },
-        success:function(res){
-          if(res.data.status == 200){
-            wx.showToast({
-              title: '评论成功',
-            });
-            // 刷新评论并且设置input框为空
-            _this.setData({
-              contentValue: "",
-              commentsList: []
-            });
-            _this.queryComments(1);
-          }else{
-            wx.showToast({
-              title: '评论失败',
-              icon: 'none'
-            })
+    if(comment){
+      // 判断是否登录
+      var _this = this;
+      var videoInfo = _this.data.videoInfo;
+      var serverUrl = app.serverUrl;
+      var user = app.getGlobalUserInfo();
+      var info = JSON.stringify(this.data.videoInfo);
+      if (user.id == undefined || user.id == '' || user.id == null) {
+        wx.navigateTo({
+          url: '../userLogin/login?from=upload&info=' + info,
+        })
+      } else {
+        wx.request({
+          url: serverUrl + '/comment/save?',
+          method: 'POST',
+          data: {
+            videoId: videoInfo.id,
+            fromUserId: user.id,
+            comment: comment
+          },
+          header: {
+            "content-type": "application/json",
+            "userId": user.id,
+            "userToken": user.userToken
+          },
+          success: function (res) {
+            console.log(res);
+            if (res.data.status == 200) {
+              wx.showToast({
+                title: '评论成功',
+              });
+              // 刷新评论并且设置input框为空
+              _this.setData({
+                contentValue: "",
+                commentsList: []
+              });
+              _this.queryComments(1);
+            } else if (res.data.status == 502) {
+              wx.showToast({
+                title: res.data.msg,
+                icon: 'none',
+                duration: 2000
+              });
+              setTimeout(function () {
+                wx.redirectTo({
+                  url: '../userLogin/login',
+                })
+              }, 2000)
+            } else {
+              wx.showToast({
+                title: '评论失败',
+                icon: 'none'
+              })
+            }
           }
-        }
 
+        })
+      }
+    }else{
+      wx.showToast({
+        title: '无字天书？',
+        icon:'none'
       })
     }
+    
   },
 
   // 查看留言
@@ -306,23 +341,28 @@ Page({
       },
       success: function(res){
         console.log(res);
+        
         var data = res.data;
         if(data.status == 200){
           var commentsList = data.data.rows;
-          var oldCommentsList = _this.data.commentsList; // 旧的集合，将新的拼接起来
-
+          if(page != 1){
+            var oldCommentsList = _this.data.commentsList; // 旧的集合，将新的拼接起来
+            commentsList = oldCommentsList.concat(commentsList);
+          }
+          var commentsSum = commentsList.length;
           _this.setData({
-            commentsList: oldCommentsList.concat(commentsList),
+            commentsList: commentsList,
             commentsPage: page,
+            commentsSum: commentsSum,
             commentsTotalPage: res.data.data.total
           });
-        }
+        } 
       }
     })
   },
 
   // 上拉分页加载留言
-  onReachBottom: function(res){
+  onScrollLoad: function(res){
     var _this = this;
     var currentPage = _this.data.commentsPage;
     var totalPage = _this.data.commentsTotalPage;

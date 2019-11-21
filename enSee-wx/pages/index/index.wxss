@@ -1,5 +1,10 @@
+.index {
+    background-color: #363636;
+}
+
 .item-container {
     position: relative;
+    padding-bottom: 10rpx;
 }
 
 .cover {
@@ -15,7 +20,6 @@
 
 .desc {
     margin-top: -40rpx;
-    margin-bottom: 10rpx;
     display: flex;
     align-items: center;
 }
@@ -32,6 +36,14 @@
     align-items: center;
     
     margin-left: 10px;
+}
+
+.desc .descContent {
+  color: whitesmoke;
+  margin-top: 45rpx;
+  margin-right: 10rpx;
+  font-size: small;
+  font-family: w
 }
 
 .title {

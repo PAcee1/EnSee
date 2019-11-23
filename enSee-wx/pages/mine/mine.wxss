@@ -1,12 +1,13 @@
 page {
     font-size: 14px;
+    background: #000000;
 }
 
 .container {
-    background-color: whitesmoke;
     display: flex;
     flex-direction: column;
     align-items: center;
+    
 }
 
 .container-row {
@@ -14,6 +15,7 @@ page {
     flex-direction: row;
     margin-bottom: 10px;
     margin-top: 10px;
+    color: whitesmoke;
 }
 
 .info-items {
@@ -32,7 +34,8 @@ page {
 }
 
 .nickname {
-    margin-top: 5px;
+    margin-top: 10rpx;
+    margin-bottom: 10rpx;
     font-weight: bold;
     font-size: 18px;
 }
@@ -56,20 +59,28 @@ page {
 .container-video {
     display: flex;
     flex-direction: row;
-    margin-top: 3px;
-    margin-bottom: 3px;
     text-align: center;
-    border: solid 1px;
+    
     line-height: 30px;
 }
-
+.mineBut{
+  display: flex;
+  width: 60%;
+  flex-direction: row;
+  justify-content: space-between;
+}
 .video-info {
     width: 100%;
+    color: rgba(128,138,135,.5);
+    border-bottom: solid 2px;
+    border-color: #363636;
 }
 
 .video-info-selected {
-    background-color: gainsboro;
-}
+    color: white;
+    border-bottom: solid 2px;
+    border-color: orange;
+} 
 
 .container-video-list {
     display: flex;

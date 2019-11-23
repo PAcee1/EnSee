@@ -3,6 +3,8 @@ package com.enbuys.mapper;
 import com.enbuys.pojo.Users;
 import com.enbuys.utils.MyMapper;
 
+import java.util.List;
+
 
 public interface UsersMapper extends MyMapper<Users> {
 
@@ -38,5 +40,11 @@ public interface UsersMapper extends MyMapper<Users> {
      * @param userId
      */
     void reduceFansCounts(String userId);
+
+    // 查询关注
+    List<Users> findFollowUserList(String userId);
+
+    // 查询粉丝
+    List<Users> findFansUserList(String userId);
 
 }

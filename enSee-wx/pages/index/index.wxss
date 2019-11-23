@@ -1,5 +1,5 @@
 .index {
-    background-color: #363636;
+  background-color: #363636;
 }
 
 .item-container {
@@ -68,3 +68,11 @@
     margin-right: 20rpx;
     color: darkgray;
 }
+
+.tab{
+  margin-top: 20rpx;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+} 

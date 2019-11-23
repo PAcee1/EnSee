@@ -11,13 +11,13 @@ Page({
     userLikeVideo: false,
 
     commentsPage: 1,
-    commentsSize : 7777, // 暂时不做分页
+    commentsSize: 7777, // 暂时不做分页
     commentsTotalPage: 1,
     commentsSum: 0,
     commentsList: [],
 
     contentValue: "",
-    talkViewClass:"talks-layer",
+    talkViewClass: "talks-layer",
     talkHidden: false,
 
 
@@ -27,13 +27,6 @@ Page({
   videoContent: {},
 
   onLoad: function(params) {
-    // 评论弹出层动画创建
-    this.animation = wx.createAnimation({
-      duration: 400,
-      timingFunction: "ease",
-      delay: 0
-    })
-    this.animation.bottom("0rpx").height("100%").step();
     var _this = this;
     var serverUrl = app.serverUrl;
     var user = app.getGlobalUserInfo();
@@ -176,37 +169,19 @@ Page({
   shareMe: function() {
     var _this = this;
     var videoInfo = _this.data.videoInfo;
+    var user = app.getGlobalUserInfo();
+    var itemList = ['下载视频', '举报视频'];
+    if (user.id != undefined || user.id != '' || user.id != null) {
+      if (videoInfo.userId == user.id) {
+        itemList = ['下载视频', '举报视频', '删除视频'];
+      }
+    }
     wx.showActionSheet({
-      itemList: ['下载视频', '举报视频'],
+      itemList: itemList,
       success(res) {
         console.log(res.tapIndex);
         if (res.tapIndex == 0) { // 下载视频
-          wx.showLoading({
-            title: '下载中...',
-          })
-          wx.downloadFile({
-            url: app.serverUrl + videoInfo.videoPath, //仅为示例，并非真实的资源
-            success(res) {
-              // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
-              if (res.statusCode === 200) {
-                console.log(res.tempFilePath);
-                // 保存视频到相册
-                wx.saveVideoToPhotosAlbum({
-                  filePath: res.tempFilePath,
-                  success: function(res) {
-                    console.log(res);
-                    debugger
-                    if (res.status == 200) {
-                      wx.showToast({
-                        title: '下载成功',
-                        duration: 2000
-                      })
-                    }
-                  }
-                })
-              }
-            }
-          })
+          _this.downloadVideo();
         } else if (res.tapIndex == 1) { // 举报视频
           // 转跳举报页面，传递视频id与创建者id
           var videoId = videoInfo.id;
@@ -215,10 +190,87 @@ Page({
             url: '../report/report?videoId=' + videoId +
               '&publishId=' + publishId,
           })
+        } else if (res.tapIndex == 2) { // 删除视频
+          _this.deleteVideo();
         }
       },
       fail(res) {
         console.log(res.errMsg)
+      }
+    })
+  },
+
+  // 下载视频
+  downloadVideo: function() {
+    var _this = this;
+    var videoInfo = _this.data.videoInfo;
+    wx.showLoading({
+      title: '下载中...',
+    })
+    wx.downloadFile({
+      url: app.serverUrl + videoInfo.videoPath, //仅为示例，并非真实的资源
+      success(res) {
+        // 只要服务器有响应数据，就会把响应内容写入文件并进入 success 回调，业务需要自行判断是否下载到了想要的内容
+        if (res.statusCode === 200) {
+          console.log(res.tempFilePath);
+          // 保存视频到相册
+          wx.saveVideoToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success: function(res) {
+              console.log(res);
+              wx.showToast({
+                title: '下载成功',
+                duration: 2000
+              })
+              wx.hideLoading();
+            }
+          })
+        }
+      }
+    })
+  },
+
+  // 删除视频
+  deleteVideo: function() {
+    var _this = this;
+    var user = app.getGlobalUserInfo();
+    var serverUrl = app.serverUrl;
+    var videoInfo = _this.data.videoInfo;
+    wx.request({
+      url: serverUrl + '/video/delete?videoId=' + videoInfo.id,
+      method: 'POST',
+      header: {
+        "content-type": "application/json",
+        "userId": user.id,
+        "userToken": user.userToken
+      },
+      success: function(res) {
+        console.log(res);
+        if (res.data.status == 200) {
+          wx.showToast({
+            title: '删除成功',
+          });
+          // 跳转主页
+          wx.redirectTo({
+            url: '../index/index',
+          })
+        } else if (res.data.status == 502) {
+          wx.showToast({
+            title: res.data.msg,
+            icon: 'none',
+            duration: 2000
+          });
+          setTimeout(function() {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
+        } else {
+          wx.showToast({
+            title: '删除失败',
+            icon: 'none'
+          })
+        }
       }
     })
   },
@@ -233,17 +285,17 @@ Page({
   },
 
   // 点击评论按钮，显示留言框
-  leaveComment : function(){
+  leaveComment: function() {
     this.onHide();
     this.setData({
       talkViewClass: "talks-layer-show",
-      talkHidden : true
+      talkHidden: true
     })
     // 加载留言
     this.queryComments(1);
   },
   // 关闭评论，清空留言list并设置为第一页
-  hideTalks: function () {
+  hideTalks: function() {
     this.onShow();
     this.setData({
       talkViewClass: "talks-layer",
@@ -254,10 +306,10 @@ Page({
   },
 
   // 保存留言
-  saveComment : function(e){
+  saveComment: function(e) {
     console.log(e);
     var comment = e.detail.value;
-    if(comment){
+    if (comment) {
       // 判断是否登录
       var _this = this;
       var videoInfo = _this.data.videoInfo;
@@ -270,7 +322,7 @@ Page({
         })
       } else {
         wx.request({
-          url: serverUrl + '/comment/save?',
+          url: serverUrl + '/comment/save',
           method: 'POST',
           data: {
             videoId: videoInfo.id,
@@ -282,7 +334,7 @@ Page({
             "userId": user.id,
             "userToken": user.userToken
           },
-          success: function (res) {
+          success: function(res) {
             console.log(res);
             if (res.data.status == 200) {
               wx.showToast({
@@ -300,7 +352,7 @@ Page({
                 icon: 'none',
                 duration: 2000
               });
-              setTimeout(function () {
+              setTimeout(function() {
                 wx.redirectTo({
                   url: '../userLogin/login',
                 })
@@ -315,37 +367,37 @@ Page({
 
         })
       }
-    }else{
+    } else {
       wx.showToast({
         title: '无字天书？',
-        icon:'none'
+        icon: 'none'
       })
     }
-    
+
   },
 
   // 查看留言
-  queryComments: function(page){
+  queryComments: function(page) {
     var _this = this;
     var videoInfo = _this.data.videoInfo;
     var serverUrl = app.serverUrl;
     // var page = _this.data.commentsPage;
     var size = _this.data.commentsSize;
     wx.request({
-      url: serverUrl + '/comment/query?videoId=' + videoInfo.id
-          + '&page=' + page
-          + '&size=' + size,
+      url: serverUrl + '/comment/query?videoId=' + videoInfo.id +
+        '&page=' + page +
+        '&size=' + size,
       method: 'POST',
       header: {
         "content-type": "application/json"
       },
-      success: function(res){
+      success: function(res) {
         console.log(res);
-        
+
         var data = res.data;
-        if(data.status == 200){
+        if (data.status == 200) {
           var commentsList = data.data.rows;
-          if(page != 1){
+          if (page != 1) {
             var oldCommentsList = _this.data.commentsList; // 旧的集合，将新的拼接起来
             commentsList = oldCommentsList.concat(commentsList);
           }
@@ -356,13 +408,13 @@ Page({
             commentsSum: commentsSum,
             commentsTotalPage: res.data.data.total
           });
-        } 
+        }
       }
     })
   },
 
   // 上拉分页加载留言
-  onScrollLoad: function(res){
+  onScrollLoad: function(res) {
     var _this = this;
     var currentPage = _this.data.commentsPage;
     var totalPage = _this.data.commentsTotalPage;

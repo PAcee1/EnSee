@@ -1,0 +1,28 @@
+/* pages/followList/followList.wxss */
+
+page {
+  background-color: #151515;
+}
+
+.cu-list.menu-avatar>.cu-item {
+  position: relative;
+  display: flex;
+  padding-right: 10rpx;
+  height: 140rpx;
+  background-color: #363636;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.cu-list.menu-avatar>.cu-item .action {
+  width: 200rpx;
+  text-align: left;
+}
+
+.cu-bar {
+  display: flex;
+  position: relative;
+  align-items: center;
+  min-height: 100rpx;
+  justify-content: space-around;
+}

@@ -26,4 +26,6 @@ public interface VideoService {
     void userLikeVideo(String userId,String videoId,String videoCreateId);
 
     void userUnLikeVideo(String userId,String videoId,String videoCreateId);
+
+    void deleteVideo(String videoId);
 }

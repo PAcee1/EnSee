@@ -125,4 +125,12 @@ public class VideoServiceImpl implements VideoService {
         // video表减少
         videosCustomMapper.reduceVideoLikeCounts(videoId);
     }
+
+    @Override
+    public void deleteVideo(String videoId) {
+        Videos videos = new Videos();
+        videos.setId(videoId);
+        videos.setStatus(3);
+        videosMapper.updateByPrimaryKeySelective(videos);
+    }
 }

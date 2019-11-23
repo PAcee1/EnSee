@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -186,6 +187,40 @@ public class UserController extends BasicController {
         }
         userService.reduceFollowFans(userId, fansId);
         return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "修改名称",notes = "修改名称接口")
+    @PostMapping("/updateName")
+    public JsonResult updateName(@RequestBody Users users){
+        if(StringUtils.isBlank(users.getId())){
+            return JsonResult.errorMsg("用户ID为空");
+        }
+        userService.updateName(users);
+        return JsonResult.ok();
+    }
+
+    @ApiOperation(value = "查询关注",notes = "查询关注接口")
+    @ApiImplicitParam(value = "粉丝Id",name = "userId",required = true,
+            paramType = "query",dataType = "String")
+    @PostMapping("findFollow")
+    public JsonResult findFollow(String userId){
+        if(StringUtils.isBlank(userId)){
+            return JsonResult.errorMsg("用户ID为空");
+        }
+        List<Users> followUserList = userService.findFollowUserList(userId);
+        return JsonResult.ok(followUserList);
+    }
+
+    @ApiOperation(value = "查询粉丝",notes = "查询粉丝接口")
+    @ApiImplicitParam(value = "关注Id",name = "userId",required = true,
+            paramType = "query",dataType = "String")
+    @PostMapping("findFans")
+    public JsonResult findFans(String userId){
+        if(StringUtils.isBlank(userId)){
+            return JsonResult.errorMsg("用户ID为空");
+        }
+        List<Users> fansUserList = userService.findFansUserList(userId);
+        return JsonResult.ok(fansUserList);
     }
 
     /**

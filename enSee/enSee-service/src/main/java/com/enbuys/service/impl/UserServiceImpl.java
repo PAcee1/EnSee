@@ -148,4 +148,19 @@ public class UserServiceImpl implements UserService {
         }
         return true;
     }
+
+    @Override
+    public void updateName(Users users) {
+        usersMapper.updateByPrimaryKeySelective(users);
+    }
+
+    @Override
+    public List<Users> findFollowUserList(String userId) {
+        return usersMapper.findFollowUserList(userId);
+    }
+
+    @Override
+    public List<Users> findFansUserList(String userId) {
+        return usersMapper.findFansUserList(userId);
+    }
 }

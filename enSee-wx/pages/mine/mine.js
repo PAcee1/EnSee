@@ -11,6 +11,7 @@ Page({
     nickname: "昵称",
     isSearch: "false",
     isFollow : false,
+    cuModal: "cu-modal",
 
     videoSelClass: "video-info",
     isSelectedWork: "video-info-selected",
@@ -38,7 +39,8 @@ Page({
       // 如果符合条件，拦截器不做登录拦截
       userId = publishId;
       _this.setData({
-        isSearch : "true"
+        isSearch : "true",
+        id: publishId
       })
     }
     wx.showLoading({
@@ -107,6 +109,84 @@ Page({
 
     // 加载作品列表
     _this.queryAllVideo(1, null);
+  },
+
+  // 显示修改名称
+  showModal:function(){
+    this.setData({
+      cuModal: "cu-modal show"
+    })
+  },
+   // 隐藏修改名称
+  hideModal: function () {
+    this.setData({
+      cuModal: "cu-modal"
+    })
+  },
+  updateName:function(e){
+    var _this = this;
+    var nickname = e.detail.value.nickname;
+    var serverUrl = app.serverUrl;
+    var userInfo = app.getGlobalUserInfo();
+    console.log(nickname);
+    wx.request({
+      url: serverUrl + "/user/updateName",
+      method: 'POST',
+      data:{
+        id: userInfo.id,
+        nickname: nickname
+      },
+      header: {
+        "content-type": "application/json",
+        "userId": userInfo.id,
+        "userToken": userInfo.userToken
+      },
+      success: function (res) {
+        if (res.data.status == 200) {
+          // 关注成功提示消息
+          wx.showToast({
+            title: res.data.msg,
+            success: function () {
+              wx.showToast({
+                title: '修改成功',
+              })
+              _this.setData({
+                nickname: nickname
+              })
+              _this.hideModal();
+            }
+          })
+        } else if (res.data.status == 502) {
+          wx.showToast({
+            title: res.data.msg,
+            icon: 'none',
+            duration: 2000
+          });
+          setTimeout(function () {
+            wx.redirectTo({
+              url: '../userLogin/login',
+            })
+          }, 2000)
+        }
+      }
+    })
+  },
+
+  // 显示关注列表
+  showFollow: function(){
+    var userId = this.data.id;
+    wx.navigateTo({
+      url: '../followList/followList?userId=' + userId
+          + '&type=follow',
+    });
+  },
+  // 显示粉丝列表
+  showFans: function () {
+    var userId = this.data.id;
+    wx.navigateTo({
+      url: '../followList/followList?userId=' + userId
+        + '&type=fans',
+    });
   },
 
   // 点击关注或取消关注按钮
@@ -341,7 +421,7 @@ Page({
     wx.request({
       url: serverUrl + '/video/queryAll?page=' + page +
         '&size=' + size +
-        '&userId=' + userInfo.id +
+        '&userId=' + _this.data.id +
         '&likeType=' + likeType,
       method: 'POST',
       header: {

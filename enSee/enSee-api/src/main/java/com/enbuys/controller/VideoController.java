@@ -178,5 +178,16 @@ public class VideoController extends BasicController {
         return JsonResult.ok();
     }
 
+    @ApiOperation(value = "删除视频",notes = "删除视频接口")
+    @ApiImplicitParam(value = "视频Id",name = "videoId",required = true,
+                    paramType = "query",dataType = "String")
+    @PostMapping("delete")
+    public JsonResult deleteVideo(String videoId){
+        if(StringUtils.isBlank(videoId) || StringUtils.isBlank(videoId)){
+            return JsonResult.errorMsg("");
+        }
+        videoService.deleteVideo(videoId);
+        return JsonResult.ok();
+    }
 
 }

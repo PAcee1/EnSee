@@ -1,0 +1,51 @@
+<view class="cu-bar solid-bottom">
+  <view bindtap="showFollowList">
+    <block wx:if="{{listType}}">
+    <text class="cuIcon-title text-orange"></text>
+    </block>
+    <text style="color:#f1f1f1">关注列表</text>
+  </view>
+  <view bindtap="showFansList">
+    <block wx:if="{{!listType}}">
+    <text class="cuIcon-title text-orange"></text>
+    </block>
+    <text style="color:#f1f1f1">粉丝列表</text>
+  </view>
+</view>
+<view class="cu-list menu-avatar">
+  <block wx:if="{{isFollowType}}">
+    <view class="cu-item {{modalName=='move-box-'+ index?'move-cur':''}} " wx:for="{{followList}}"
+     wx:key bindtouchstart="ListTouchStart" bindtouchmove="ListTouchMove" bindtouchend="ListTouchEnd"
+      data-target="move-box-{{index}}" bindtap="showUserInfo" data-arrindex='{{index}}'>
+      <view class="cu-avatar round lg" style="background-image:url({{serverUrl}}{{item.faceImage}});"></view>
+      <view class="content">
+        <view class="text-white">{{item.nickname}}</view>
+      </view>
+      <view class="action">
+        <view class="text-grey text-s">粉丝：{{item.fansCounts}}</view>
+        <view class="text-grey text-s">关注：{{item.followCounts}}</view>
+      </view>
+      <view class="move">
+        <view class="bg-red" data-arrindex='{{index}}' bindtap="unFollow">取消关注</view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:if="{{!isFollowType}}">
+
+    <view class="cu-item {{modalName=='move-box-'+ index?'move-cur':''}} " wx:for="{{followList}}"
+     wx:key bindtap="showUserInfo" data-arrindex='{{index}}'>
+      <view class="cu-avatar round lg" style="background-image:url({{serverUrl}}{{item.faceImage}});"></view>
+      <view class="content">
+        <view class="text-white">{{item.nickname}}</view>
+      </view>
+      <view class="action">
+        <view class="text-grey text-s">粉丝：{{item.fansCounts}}</view>
+        <view class="text-grey text-s">关注：{{item.followCounts}}</view>
+      </view>
+      <view class="move">
+        <view class="bg-red" data-arrindex='{{index}}' bindtap="unFollow">取消关注</view>
+      </view>
+    </view>
+  </block>
+</view>

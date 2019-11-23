@@ -38,4 +38,37 @@
   <update id="reduceFansCounts" parameterType="String">
     update users set fans_counts = fans_counts - 1 where id = #{userId}
   </update>
+
+  <select id="findFollowUserList" parameterType="String" resultMap="BaseResultMap">
+    SELECT
+        u.*
+    FROM
+        users u
+    WHERE
+        u.id IN (
+            SELECT
+                user_id
+            FROM
+                users_fans
+            WHERE
+                fan_id = #{userId}
+        )
+  </select>
+
+  <select id="findFansUserList" parameterType="String" resultMap="BaseResultMap">
+    SELECT
+        u.*
+    FROM
+        users u
+    WHERE
+        u.id IN (
+            SELECT
+                fan_id
+            FROM
+                users_fans
+            WHERE
+                user_id = #{userId}
+        )
+  </select>
+
 </mapper>

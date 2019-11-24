@@ -14,6 +14,8 @@ import com.github.pagehelper.PageInfo;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +33,7 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private Sid sid;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void saveComment(Comments comments) {
         comments.setId(sid.nextShort());
@@ -38,6 +41,7 @@ public class CommentServiceImpl implements CommentService {
         commentsMapper.insert(comments);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public PagedResult queryComments(String videoId, Integer page, Integer size) {
         PageHelper.startPage(page,size);

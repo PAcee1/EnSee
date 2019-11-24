@@ -28,6 +28,7 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private Sid sid;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void reportVideo(UsersReport report) {
         // 插入id与创建时间

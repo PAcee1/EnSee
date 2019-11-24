@@ -93,6 +93,7 @@ public class UserServiceImpl implements UserService {
         usersMapper.updateByPrimaryKeySelective(users);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public Boolean isLiked(String userId, String videoId) {
         Example example = new Example(UsersLikeVideos.class);
@@ -106,6 +107,7 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void addFollowFans(String userId, String fansId) {
         // 处理中间表
@@ -121,6 +123,7 @@ public class UserServiceImpl implements UserService {
         usersMapper.addFollowCounts(fansId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void reduceFollowFans(String userId, String fansId) {
         // 处理中间表
@@ -136,6 +139,7 @@ public class UserServiceImpl implements UserService {
         usersMapper.reduceFollowCounts(fansId);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public Boolean isFollow(String userId, String fansId) {
         Example example = new Example(UsersFans.class);
@@ -149,16 +153,19 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void updateName(Users users) {
         usersMapper.updateByPrimaryKeySelective(users);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public List<Users> findFollowUserList(String userId) {
         return usersMapper.findFollowUserList(userId);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public List<Users> findFansUserList(String userId) {
         return usersMapper.findFansUserList(userId);

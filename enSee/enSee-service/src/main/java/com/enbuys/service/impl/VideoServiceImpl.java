@@ -126,6 +126,7 @@ public class VideoServiceImpl implements VideoService {
         videosCustomMapper.reduceVideoLikeCounts(videoId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void deleteVideo(String videoId) {
         Videos videos = new Videos();

@@ -25,11 +25,12 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new MyFilter())
-                .addPathPatterns("/user/getUserInfo","/user/uploadFace","/user/logout","/user/addFollowFans","/user/reduceFollowFans")
+                .addPathPatterns("/user/getUserInfo","/user/uploadFace","/user/logout","/user/addFollowFans","/user/reduceFollowFans",
+                                "updateName")
                 .addPathPatterns("/bgm/**")
                 .addPathPatterns("/report/**")
                 .addPathPatterns("/comment/save")
-                .addPathPatterns("/video/upload");
+                .addPathPatterns("/video/upload","/video/delete","/video/userUnLikeVideo");
         super.addInterceptors(registry);
     }
 }

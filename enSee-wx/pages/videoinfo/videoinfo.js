@@ -286,7 +286,6 @@ Page({
 
   // 点击评论按钮，显示留言框
   leaveComment: function() {
-    this.onHide();
     this.setData({
       talkViewClass: "talks-layer-show",
       talkHidden: true
@@ -296,7 +295,6 @@ Page({
   },
   // 关闭评论，清空留言list并设置为第一页
   hideTalks: function() {
-    this.onShow();
     this.setData({
       talkViewClass: "talks-layer",
       talkHidden: false,

@@ -22,10 +22,11 @@
       <cover-image class="size-me" src='../resource/images/comments.png' style='margin-top:30rpx;' bindtap='leaveComment'></cover-image>
       <!-- 分享按钮 -->
       <cover-image class="size-me" src='../resource/images/share.png' style='margin-top:30rpx;' bindtap='shareMe'></cover-image>
+      
     </cover-view>
 
     <cover-view class='container-words' hidden="{{talkHidden}}">
-      <cover-view>@{{videoInfo.nickname}}</cover-view>
+      <cover-view class='video-name'>@{{videoInfo.nickname}}</cover-view>
       <cover-view class='video-desc'>{{videoInfo.videoDesc}}</cover-view>
     </cover-view>
 

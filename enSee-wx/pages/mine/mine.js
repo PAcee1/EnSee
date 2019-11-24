@@ -21,7 +21,7 @@ Page({
     videoPage: 1,
     videoTotal: 1,
 
-    size: 9,
+    size: 999,
     videoFalg: false, // true显示作品，false显示喜欢
   },
 

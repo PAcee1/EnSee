@@ -1,4 +1,4 @@
-<view class="index">
+<view class="index" bindtouchstart="ListTouchStart" bindtouchmove="ListTouchMove" bindtouchend="ListTouchEnd">
   <view wx:for="{{videosList}}" class="item-container">
     <view style='width:{{screenWidth}}px;height:210px;' class='back-img'>
       <image src="{{serverUrl}}{{item.coverPath}}" style='width:{{screenWidth}}px;height:210px;' mode="aspectFit" bindtap='showVideoInfo' data-arrindex='{{index}}'></image>

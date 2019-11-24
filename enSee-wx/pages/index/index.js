@@ -7,7 +7,8 @@ Page({
     totalPage: 1,
     videosList: [],
     screenWidth: 350,
-
+    touchS: [0, 0],
+    touchE: [0, 0],
     videoDesc: '',
     serverUrl: ""
   },
@@ -140,6 +141,39 @@ Page({
     return {
       title: '嗯看视频',
       path: '/pages/index/index'
+    }
+  },
+
+  // ListTouch触摸开始
+  ListTouchStart(e) {
+    // console.log(e.touches[0].pageX)
+    let sx = e.touches[0].pageX
+    let sy = e.touches[0].pageY
+    this.data.touchS = [sx, sy]
+  },
+
+  // ListTouch计算方向
+  ListTouchMove(e) {
+    let sx = e.touches[0].pageX;
+    let sy = e.touches[0].pageY;
+    this.data.touchE = [sx, sy]
+  },
+
+  // ListTouch计算滚动
+  ListTouchEnd(e) {
+    let start = this.data.touchS
+    let end = this.data.touchE
+    console.log(start)
+    console.log(end)
+    if (start[0] < end[0] - 50) {
+      console.log('右滑')
+    } else if (start[0] > end[0] + 60 && end[0] != 0 && end[1] != 0) {
+      console.log('左滑')
+      wx.navigateTo({
+        url: '../mine/mine',
+      })
+    } else {
+      console.log('静止')
     }
   }
 

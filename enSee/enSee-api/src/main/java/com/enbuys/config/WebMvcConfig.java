@@ -22,6 +22,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         return new MyFilter();
     }
 
+    @Bean(initMethod = "init")
+    public ZKCuratorClient zkCuratorClient(){
+        return new ZKCuratorClient();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new MyFilter())
